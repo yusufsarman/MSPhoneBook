@@ -1,4 +1,6 @@
 using ContactApi.Infrastructure;
+using ContactApi.Infrastructure.Concretes;
+using ContactApi.Infrastructure.Interfaces;
 using ContactApi.Mapping;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +22,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddTransient(typeof(IContactService), typeof(ContactService));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
