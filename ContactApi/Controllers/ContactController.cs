@@ -19,8 +19,8 @@ namespace ContactApi.Controllers
                 return NotFound(); // 404 Not Found
             }
 
-            //return Ok(contact); // 200 OK
-            return Ok(); 
+            return Ok(contact); // 200 OK
+             
         }
 
         [HttpGet]
