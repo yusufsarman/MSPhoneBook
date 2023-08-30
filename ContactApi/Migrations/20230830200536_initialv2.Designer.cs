@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ContactApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230830191644_initial")]
-    partial class initial
+    [Migration("20230830200536_initialv2")]
+    partial class initialv2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,9 +27,11 @@ namespace ContactApi.Migrations
 
             modelBuilder.Entity("ContactApi.Entities.Contact", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int?>("Id"));
 
                     b.Property<string>("Company")
                         .IsRequired()
@@ -53,15 +55,17 @@ namespace ContactApi.Migrations
 
             modelBuilder.Entity("ContactApi.Entities.ContactDetail", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int?>("Id"));
 
                     b.Property<int>("ContactDetailType")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("ContactId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("ContactId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Content")
                         .IsRequired()

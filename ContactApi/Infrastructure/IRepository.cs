@@ -6,8 +6,8 @@ namespace ContactApi.Infrastructure
     {
         Task<IEnumerable<T>> GetAll();
         Task<IEnumerable<T>> Find(Expression<Func<T, bool>> predicate);
-        Task<T> GetById(int id);        
-        Task Add(T entity);
+        Task<T> GetById(int id);
+        Task<T> Add(T entity);
         Task Update(T entity);
         Task Delete(T entity);
     }

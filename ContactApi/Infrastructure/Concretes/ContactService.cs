@@ -16,12 +16,19 @@ namespace ContactApi.Infrastructure.Concretes
             _mapper = mapper;
         }
 
-        public async Task<ContactDto> CreateContactAsync(ContactDto addContact)
+        public async Task<ContactDto> CreateContactAsync(ContactCreateDto addContact)
         {
             var _input = _mapper.Map<Contact>(addContact);
-            await _contactRepository.Add(_input);
-            return addContact;
+            var data =await _contactRepository.Add(_input);
 
+            return _mapper.Map<ContactDto>(data);
+
+        }
+
+        public async Task<ContactDto> GetContactByIdAsync(int contactId)
+        {
+            var data = await _contactRepository.GetById(contactId);
+            return _mapper.Map<ContactDto>(data);
         }
     }
 }

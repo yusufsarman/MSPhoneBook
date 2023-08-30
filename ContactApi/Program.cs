@@ -17,6 +17,10 @@ builder.Services.AddApiVersioning(_ =>
     _.AssumeDefaultVersionWhenUnspecified = true;
     _.ReportApiVersions = true;
 });
+builder.Services.AddMvc(options =>
+{
+    options.SuppressAsyncSuffixInActionNames = false;
+});
 builder.Services.AddDbContext<AppDbContext>(options =>
                     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddEndpointsApiExplorer();

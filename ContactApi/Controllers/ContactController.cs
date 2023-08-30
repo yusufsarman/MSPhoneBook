@@ -1,4 +1,5 @@
-﻿using ContactApi.Model;
+﻿using ContactApi.Infrastructure.Interfaces;
+using ContactApi.Model;
 using ContactApi.Model.ValidateObjects;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,18 +9,31 @@ namespace ContactApi.Controllers
     [Route("api/v{version:apiVersion}/contacts")]
     public class ContactController : ControllerBase
     {
+        private readonly IContactService _contactService;
+        public ContactController(IContactService contactService)
+        {
+            _contactService = contactService;
+        }
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetByIdAsync(int id)
         {
-            var contact = ""; 
-            if (contact == null)
+            if (id > 0)
             {
-                return NotFound(); // 404 Not Found
-            }
+                ContactDto contact =await _contactService.GetContactByIdAsync(id);
+                if (contact == null)
+                {
+                    return NotFound(); // 404 Not Found
+                }
 
-            return Ok(contact); // 200 OK
+                return Ok(contact); // 200 OK
+            }
+            else
+            {
+                return BadRequest();
+            }
+            
              
         }
 
@@ -37,12 +51,20 @@ namespace ContactApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateAsync([FromBody] ContactCreateDto contact)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState); // Return validation errors
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState); // Return validation errors
+                }
+                ContactDto data = await _contactService.CreateContactAsync(contact);
+                return CreatedAtAction(nameof(GetByIdAsync), new { id = data.Id }, data); // 201 Created
             }
-            // Save contact to database or storage
-            return CreatedAtAction(nameof(GetByIdAsync), new { id = contact.Name }, contact); // 201 Created
+            catch (Exception ex )
+            {
+                return BadRequest(ex.Message);
+            }
+            
         }
 
         [HttpPut("{id}")]

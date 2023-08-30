@@ -27,10 +27,11 @@ namespace ContactApi.Infrastructure
             return await _dbContext.Set<T>().FindAsync(id);
         }       
 
-        public async Task Add(T entity)
+        public async Task<T> Add(T entity)
         {
-            await _dbContext.Set<T>().AddAsync(entity);
+           var data = await _dbContext.Set<T>().AddAsync(entity);
             await _dbContext.SaveChangesAsync();
+            return data.Entity;
         }
 
         public async Task Update(T entity)

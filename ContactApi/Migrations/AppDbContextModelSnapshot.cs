@@ -24,9 +24,11 @@ namespace ContactApi.Migrations
 
             modelBuilder.Entity("ContactApi.Entities.Contact", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int?>("Id"));
 
                     b.Property<string>("Company")
                         .IsRequired()
@@ -50,15 +52,17 @@ namespace ContactApi.Migrations
 
             modelBuilder.Entity("ContactApi.Entities.ContactDetail", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int?>("Id"));
 
                     b.Property<int>("ContactDetailType")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("ContactId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("ContactId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Content")
                         .IsRequired()
