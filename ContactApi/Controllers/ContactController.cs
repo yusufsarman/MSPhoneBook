@@ -1,4 +1,5 @@
 ﻿using ContactApi.Model;
+using ContactApi.Model.ValidateObjects;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ContactApi.Controllers
@@ -34,28 +35,28 @@ namespace ContactApi.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateAsync([FromBody] ContactItem contact)
-        {            
-
-            // Validation checks and creation logic
-            if (contact == null)
+        public async Task<IActionResult> CreateAsync([FromBody] ContactCreateDto contact)
+        {
+            if (!ModelState.IsValid)
             {
-                return BadRequest(); // 400 Bad Request
+                return BadRequest(ModelState); // Return validation errors
             }
-
             // Save contact to database or storage
-            return CreatedAtAction(nameof(GetByIdAsync), new { id = contact.Id }, contact); // 201 Created
+            return CreatedAtAction(nameof(GetByIdAsync), new { id = contact.Name }, contact); // 201 Created
         }
 
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateAsync(int id, [FromBody] ContactItem contact)
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] ContactDto contact)
         {
-            // Validation checks and update logic
-            if (contact == null || contact.Id != id)
+            if (!ModelState.IsValid)
             {
-                return BadRequest(); // 400 Bad Request
+                return BadRequest(ModelState); // Return validation errors
+            }
+            if (contact.Id != id)
+            {
+                return BadRequest("Id not matched"); 
             }
 
             // Update contact
