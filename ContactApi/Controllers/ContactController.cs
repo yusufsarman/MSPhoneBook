@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ContactApi.Controllers
 {
     [ApiController]
-    [Route("api/v{version:apiVersion}/contacts")]
+    [Route("api/v{version:apiVersion}/contact")]
     [ApiVersion("1.0")]
     public class ContactController : ControllerBase
     {
