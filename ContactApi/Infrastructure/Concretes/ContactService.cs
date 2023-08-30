@@ -25,10 +25,21 @@ namespace ContactApi.Infrastructure.Concretes
 
         }
 
+        public async Task DeleteContactByIdAsync(int id)
+        {
+            await _contactRepository.Delete(id);
+        }
+
         public async Task<ContactDto> GetContactByIdAsync(int contactId)
         {
             var data = await _contactRepository.GetById(contactId);
             return _mapper.Map<ContactDto>(data);
+        }
+
+        public async Task<List<ContactDto>> GetListAsync()
+        {
+            var data = await _contactRepository.GetAll();
+            return _mapper.Map<List<ContactDto>>(data);
         }
     }
 }

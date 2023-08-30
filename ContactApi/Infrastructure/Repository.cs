@@ -40,10 +40,15 @@ namespace ContactApi.Infrastructure
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task Delete(T entity)
+        public async Task Delete(int id)
         {
-            _dbContext.Set<T>().Remove(entity);
-            await _dbContext.SaveChangesAsync();
+            var data = await _dbContext.Set<T>().FindAsync(id);
+            if (data != null)
+            {
+                _dbContext.Set<T>().Remove(data);
+                await _dbContext.SaveChangesAsync();
+            }
+           
         }
     }
 }

@@ -7,6 +7,7 @@ namespace ContactApi.Controllers
 {
     [ApiController]
     [Route("api/v{version:apiVersion}/contacts")]
+    [ApiVersion("1.0")]
     public class ContactController : ControllerBase
     {
         private readonly IContactService _contactService;
@@ -14,20 +15,30 @@ namespace ContactApi.Controllers
         {
             _contactService = contactService;
         }
-        [HttpGet("{id}")]
+        [HttpGet("GetByIdAsync{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetByIdAsync(int id)
         {
             if (id > 0)
             {
-                ContactDto contact =await _contactService.GetContactByIdAsync(id);
-                if (contact == null)
+                try
                 {
-                    return NotFound(); // 404 Not Found
-                }
+                    ContactDto contact = await _contactService.GetContactByIdAsync(id);
+                    if (contact == null)
+                    {
+                        return NotFound(); // 404 Not Found
+                    }
 
-                return Ok(contact); // 200 OK
+                    return Ok(contact); // 200 OK
+
+                }
+                catch (Exception ex)
+                {
+
+                    return BadRequest(ex);
+                }
+               
             }
             else
             {
@@ -37,13 +48,22 @@ namespace ContactApi.Controllers
              
         }
 
-        [HttpGet]
+        [HttpGet("GetListAsync")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetListAsync()
         {
-            
-            //return Ok(contacts); // 200 OK
-            return Ok(); // 200 OK
+            try
+            {
+                List<ContactDto> data = await _contactService.GetListAsync();
+                return Ok(data); // 200 OK
+              
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex);
+            }
+           
         }
 
         [HttpPost]
@@ -66,41 +86,31 @@ namespace ContactApi.Controllers
             }
             
         }
-
-        [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateAsync(int id, [FromBody] ContactDto contact)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState); // Return validation errors
-            }
-            if (contact.Id != id)
-            {
-                return BadRequest("Id not matched"); 
-            }
-
-            // Update contact
-
-            return CreatedAtAction(nameof(GetByIdAsync), new { id = contact.Id }, contact);
-        }
-
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-           
-            //var contact = ...; 
-            //if (contact == null)
-            //{
-            //    return NotFound(); // 404 Not Found
-            //}
+            if (id > 0)
+            {
+                try
+                {
+                    await _contactService.DeleteContactByIdAsync(id);
+                    return NoContent(); // 204 No Content
+                }
+                catch (Exception ex)
+                {
 
-            // Delete contact
+                    return BadRequest(ex);
+                }
+                
+            }
+            else
+            {
+                return BadRequest();
+            }
 
-            return NoContent(); // 204 No Content
+            
         }
     }
 }
