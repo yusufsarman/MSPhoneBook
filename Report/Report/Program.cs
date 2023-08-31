@@ -2,6 +2,8 @@ using ReportApi.Infrastructure;
 using ReportApi.Mapping;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +29,10 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 //builder.Services.AddTransient(typeof(IContactService), typeof(ContactService));
 //builder.Services.AddTransient(typeof(IContactDetailService), typeof(ContactDetailService));
 var app = builder.Build();
-
+app.UseHealthChecks("/report-service-healthcheck", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
