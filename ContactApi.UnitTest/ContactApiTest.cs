@@ -116,6 +116,25 @@ namespace ContactApi.UnitTest
             Assert.AreEqual(1, results.Count, "Validation Error count is expected value ");
 
         }
+        [TestMethod]
+        public async Task Contact_CreateAsync_Status201()
+        {
+            int contactId = 5;
+            var contactInfo = GetContactCreateFoo(contactId);
+            _contactServiceMock.Setup(x => x.CreateContactAsync(contactInfo))
+             .Returns(Task.FromResult(GetContactFoo(contactId)));
+
+
+            var actionResult = await _contactController.CreateAsync(contactInfo);
+
+
+            var objectResult = (ObjectResult)actionResult;
+            var response = (ContactDto)objectResult.Value;
+            Assert.AreEqual(objectResult.StatusCode, (int)System.Net.HttpStatusCode.Created);
+            Assert.IsNotNull(response);
+            Assert.IsInstanceOfType(response, typeof(ContactDto));
+            Assert.AreEqual(response.Id, contactId);
+        }
         private List<ContactDto> GetContactsFoo()
         {
             return new List<ContactDto>
@@ -141,6 +160,15 @@ namespace ContactApi.UnitTest
             return new ContactDto
             {
                 Id = id,
+                Name = "Ahmet",
+                Surname = "C",
+                Company = "Turkcell",
+            };
+        }
+        private ContactCreateDto GetContactCreateFoo(int id)
+        {
+            return new ContactCreateDto
+            {                
                 Name = "Ahmet",
                 Surname = "C",
                 Company = "Turkcell",
