@@ -41,7 +41,7 @@ namespace ContactApi.UnitTest
         public async Task Contact_GetListAsync_Status200()
         {
             _contactServiceMock.Setup(x => x.GetListAsync())
-             .Returns(Task.FromResult(GetContactFoo()));
+             .Returns(Task.FromResult(GetContactsFoo()));
             
             
             var actionResult = await _contactController.GetListAsync();
@@ -52,8 +52,25 @@ namespace ContactApi.UnitTest
             Assert.AreEqual(objectResult.StatusCode, (int)System.Net.HttpStatusCode.OK);
             Assert.IsInstanceOfType(response,typeof(List<ContactDto>));
         }
+        [TestMethod]
+        public async Task Contact_GetByIdAsync_Status200()
+        {
+            int contactId = 5;
+            _contactServiceMock.Setup(x => x.GetContactByIdAsync(contactId))
+             .Returns(Task.FromResult(GetContactFoo(contactId)));
 
-        private List<ContactDto> GetContactFoo()
+
+            var actionResult = await _contactController.GetByIdAsync(contactId);
+
+
+            var objectResult = (ObjectResult)actionResult;
+            var response = (ContactDto)objectResult.Value;
+            Assert.AreEqual(objectResult.StatusCode, (int)System.Net.HttpStatusCode.OK);
+            Assert.IsNotNull(response);
+            Assert.IsInstanceOfType(response, typeof(ContactDto));
+            Assert.AreEqual(response.Id, contactId);
+        }
+        private List<ContactDto> GetContactsFoo()
         {
             return new List<ContactDto>
          {
@@ -72,6 +89,16 @@ namespace ContactApi.UnitTest
                Company = "Ford",
            },
         };
+        }
+        private ContactDto GetContactFoo(int id)
+        {
+            return new ContactDto
+            {
+                Id = id,
+                Name = "Ahmet",
+                Surname = "C",
+                Company = "Turkcell",
+            };
         }
     }
 }
