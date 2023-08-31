@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ContactApi.Infrastructure.Extensions;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace ContactApi.Infrastructure
@@ -12,9 +13,15 @@ namespace ContactApi.Infrastructure
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<T>> GetAll()
+        public async Task<IEnumerable<T>> GetAll(params Expression<Func<T, object>>[] includes)
         {
-            return await _dbContext.Set<T>().ToListAsync();
+            var query = _dbContext.Set<T>().AsQueryable();
+
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+            return await query.ToListAsync();
         }
 
         public async Task<IEnumerable<T>> Find(Expression<Func<T, bool>> predicate)
@@ -22,10 +29,13 @@ namespace ContactApi.Infrastructure
             return await _dbContext.Set<T>().Where(predicate).ToListAsync();
         }
 
-        public async Task<T> GetById(int id)
+        public async Task<T> GetById(int id, params Expression<Func<T, object>>[] includes)
         {
-            return await _dbContext.Set<T>().FindAsync(id);
-        }       
+           
+            return await _dbContext.Set<T>().IncludeAndWhereId(id, includes).FirstOrDefaultAsync();
+
+        }
+       
 
         public async Task<T> Add(T entity)
         {
@@ -49,6 +59,11 @@ namespace ContactApi.Infrastructure
                 await _dbContext.SaveChangesAsync();
             }
            
+        }
+        public IQueryable<T> Include(params Expression<Func<T, object>>[] includes)
+        {
+            IQueryable<T> query = _dbContext.Set<T>();
+            return includes.Aggregate(query, (current, include) => current.Include(include));
         }
     }
 }

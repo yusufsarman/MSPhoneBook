@@ -32,13 +32,13 @@ namespace ContactApi.Infrastructure.Concretes
 
         public async Task<ContactDto> GetContactByIdAsync(int contactId)
         {
-            var data = await _contactRepository.GetById(contactId);
+            var data = await _contactRepository.GetById(contactId,c=>c.ContactDetails);
             return _mapper.Map<ContactDto>(data);
         }
 
         public async Task<List<ContactDto>> GetListAsync()
         {
-            var data = await _contactRepository.GetAll();
+            var data = await _contactRepository.GetAll(c=>c.ContactDetails);
             return _mapper.Map<List<ContactDto>>(data);
         }
     }

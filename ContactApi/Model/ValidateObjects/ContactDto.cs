@@ -16,5 +16,7 @@ namespace ContactApi.Model.ValidateObjects
         [Required(ErrorMessage = "Company is required.")]
         [StringLength(50, ErrorMessage = "Company cannot exceed 200 characters.")]
         public string Company { get; set; }
+
+        public ICollection<ContactDetailDto> ContactDetails { get; set; }
     }
 }
