@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -69,6 +70,51 @@ namespace ContactApi.UnitTest
             Assert.IsNotNull(response);
             Assert.IsInstanceOfType(response, typeof(ContactDto));
             Assert.AreEqual(response.Id, contactId);
+        }
+        [TestMethod]
+        public async Task Contact_CreateAsync_ModelIsValid()
+        {
+            var model = new ContactCreateDto
+            {
+                Name = "111111111111111111111111111111",
+                Surname = "lastname",
+                Company = "company"
+            };
+            var context = new ValidationContext(model, serviceProvider: null, items: null);
+            var results = new List<ValidationResult>();
+
+            // Act
+            var isValid = Validator.TryValidateObject(model, context, results, validateAllProperties: true);
+
+            // Assert
+            Assert.IsTrue(isValid, "Model validation should succeed.");
+            Assert.AreEqual(0, results.Count, "No validation errors should be present.");
+
+        }
+        [TestMethod]
+        public async Task Contact_CreateAsync_ModelIsNotValid()
+        {
+            string name = "Ahmet";
+            for (int i = 0; i < 15; i++)
+            {
+                name += name;
+            }
+            var model = new ContactCreateDto
+            {
+                Name = name,
+                Surname = "lastname",
+                Company = "company"
+            };
+            var context = new ValidationContext(model, serviceProvider: null, items: null);
+            var results = new List<ValidationResult>();
+
+            // Act
+            var isValid = Validator.TryValidateObject(model, context, results, validateAllProperties: true);
+
+            // Assert
+            Assert.IsFalse(isValid, "Model validation should succeed.");
+            Assert.AreEqual(1, results.Count, "Validation Error count is expected value ");
+
         }
         private List<ContactDto> GetContactsFoo()
         {
