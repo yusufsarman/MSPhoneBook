@@ -2,17 +2,17 @@
 using ContactApi.Model.ValidateObjects;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ContactApi.Controllers
+namespace ContactDetailApi.Controllers
 {
     [ApiController]
-    [Route("api/v{version:apiVersion}/contact")]
+    [Route("api/v{version:apiVersion}/contactDetail")]
     [ApiVersion("1.0")]
-    public class ContactController : ControllerBase
+    public class ContactDetailController : ControllerBase
     {
-        private readonly IContactService _contactService;
-        public ContactController(IContactService contactService)
+        private readonly IContactDetailService _contactDetailService;
+        public ContactDetailController(IContactDetailService contactDetailService)
         {
-            _contactService = contactService;
+            _contactDetailService = contactDetailService;
         }
         [HttpGet("GetByIdAsync{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -23,13 +23,13 @@ namespace ContactApi.Controllers
             {
                 try
                 {
-                    ContactDto contact = await _contactService.GetContactByIdAsync(id);
-                    if (contact == null)
+                    ContactDetailDto contactDetail = await _contactDetailService.GetContactDetailByIdAsync(id);
+                    if (contactDetail == null)
                     {
                         return NotFound(); // 404 Not Found
                     }
 
-                    return Ok(contact); // 200 OK
+                    return Ok(contactDetail); // 200 OK
 
                 }
                 catch (Exception ex)
@@ -37,14 +37,14 @@ namespace ContactApi.Controllers
 
                     return BadRequest(ex);
                 }
-
+               
             }
             else
             {
                 return BadRequest();
             }
-
-
+            
+             
         }
 
         [HttpGet("GetListAsync")]
@@ -53,22 +53,22 @@ namespace ContactApi.Controllers
         {
             try
             {
-                List<ContactDto> data = await _contactService.GetListAsync();
+                List<ContactDetailDto> data = await _contactDetailService.GetListAsync();
                 return Ok(data); // 200 OK
-
+              
             }
             catch (Exception ex)
             {
 
                 return BadRequest(ex);
             }
-
+           
         }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateAsync([FromBody] ContactCreateDto contact)
+        public async Task<IActionResult> CreateAsync([FromBody] ContactDetailCreateDto contactDetail)
         {
             try
             {
@@ -76,14 +76,14 @@ namespace ContactApi.Controllers
                 {
                     return BadRequest(ModelState); // Return validation errors
                 }
-                ContactDto data = await _contactService.CreateContactAsync(contact);
+                ContactDetailDto data = await _contactDetailService.CreateContactDetailAsync(contactDetail);
                 return CreatedAtAction(nameof(GetByIdAsync), new { id = data.Id }, data); // 201 Created
             }
-            catch (Exception ex)
+            catch (Exception ex )
             {
                 return BadRequest(ex.Message);
             }
-
+            
         }
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -94,7 +94,7 @@ namespace ContactApi.Controllers
             {
                 try
                 {
-                    await _contactService.DeleteContactByIdAsync(id);
+                    await _contactDetailService.DeleteContactDetailByIdAsync(id);
                     return NoContent(); // 204 No Content
                 }
                 catch (Exception ex)
@@ -102,14 +102,14 @@ namespace ContactApi.Controllers
 
                     return BadRequest(ex);
                 }
-
+                
             }
             else
             {
                 return BadRequest();
             }
 
-
+            
         }
     }
 }

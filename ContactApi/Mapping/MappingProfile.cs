@@ -10,6 +10,9 @@ namespace ContactApi.Mapping
         {
             CreateMap<ContactDto, Contact>().ReverseMap();
             CreateMap<ContactCreateDto, Contact>().ReverseMap();
+
+            CreateMap<ContactDetailDto, ContactDetail>().ReverseMap();
+            CreateMap<ContactDetailCreateDto, ContactDetail>().ReverseMap();
         }
     }
 }
