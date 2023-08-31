@@ -135,6 +135,20 @@ namespace ContactApi.UnitTest
             Assert.IsInstanceOfType(response, typeof(ContactDto));
             Assert.AreEqual(response.Id, contactId);
         }
+        [TestMethod]
+        public async Task Contact_DeleteContactByIdAsync_Status204()
+        {
+            int contactId = 5;
+            
+            _contactServiceMock.Setup(x => x.DeleteContactByIdAsync(contactId))
+             .Returns(Task.FromResult(true));
+
+
+            var actionResult = await _contactController.DeleteAsync(contactId);
+            var objectResult = (NoContentResult)actionResult;
+
+            Assert.AreEqual(objectResult.StatusCode, (int)System.Net.HttpStatusCode.NoContent);          
+        }
         private List<ContactDto> GetContactsFoo()
         {
             return new List<ContactDto>
