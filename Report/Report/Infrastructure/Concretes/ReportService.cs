@@ -1,23 +1,36 @@
-﻿using ReportApi.Infrastructure.Interfaces;
+﻿using AutoMapper;
+using ReportApi.Entities;
+using ReportApi.Infrastructure.Interfaces;
 using ReportApi.Model.ValidateObjects;
 
 namespace ReportApi.Infrastructure.Concretes
 {
     public class ReportService : IReportService
     {
+        private readonly IRepository<Report> _reportRepository;
+        private readonly IMapper _mapper;
+
+        public ReportService(IRepository<Report> reportRepository,
+            IMapper mapper)
+        {
+            _reportRepository = reportRepository;
+            _mapper = mapper;
+        }
         public Task<ReportDto> CreateReportAsync(ReportCreateDto addReport)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<ReportDto>> GetListAsync()
+        public async Task<List<ReportDto>> GetListAsync()
         {
-            throw new NotImplementedException();
+            var data = await _reportRepository.GetAll(c => c.ReportDetail);
+            return _mapper.Map<List<ReportDto>>(data);
         }
 
-        public Task<ReportDto> GetReportByIdAsync(int reportId)
+        public async Task<ReportDto> GetReportByIdAsync(int reportId)
         {
-            throw new NotImplementedException();
+            var data = await _reportRepository.GetById(reportId, c => c.ReportDetail);
+            return _mapper.Map<ReportDto>(data);
         }
     }
 }
