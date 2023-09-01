@@ -1,5 +1,5 @@
 {
-  "ReRoutes": [
+  "Routes": [
     {
       "DownstreamPathTemplate": "/api/v{version}/contact",
       "DownstreamScheme": "http",
@@ -36,6 +36,19 @@
         }
       ],
       "UpstreamPathTemplate": "/contacts/v{version}/GetByIdAsync/{id}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "UpstreamScheme": "http"
+    },
+    {
+      "DownstreamPathTemplate": "/api/v{version}/contact/GetListAsync",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5002
+        }
+      ],
+      "UpstreamPathTemplate": "/contacts/v{version}/GetListAsync",
       "UpstreamHttpMethod": [ "GET" ],
       "UpstreamScheme": "http"
     },
@@ -91,19 +104,7 @@
       "UpstreamHttpMethod": [ "GET" ],
       "UpstreamScheme": "http"
     },
-    {
-      "DownstreamPathTemplate": "/api/v{version}/contactDetail/GetListAsync",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5002
-        }
-      ],
-      "UpstreamPathTemplate": "/contactDetails/v{version}/GetListAsync",
-      "UpstreamHttpMethod": [ "GET" ],
-      "UpstreamScheme": "http"
-    },
+    
     //ReportApi
     {
       "DownstreamPathTemplate": "/api/v{version}/report/GetListAsync",
@@ -146,6 +147,6 @@
     }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "http://phb.api:5292"
+    "BaseUrl": "http://localhost:5292"
   }
 }
