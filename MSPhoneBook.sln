@@ -31,7 +31,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.Factory", "Buildin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.RabbitMQ", "BuildingBlock\EventBus\EventBus.RabbitMQ\EventBus.RabbitMQ.csproj", "{B1EE3591-15A5-4B56-98FE-24EC71B3F43D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ReportTest", "ReportTest", "{A90D839A-52AE-4BDE-A515-516C789F5E5C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ReportApi.Tests", "ReportApi.Tests", "{A90D839A-52AE-4BDE-A515-516C789F5E5C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReportApi.UnitTest", "Report\ReportApi.UnitTest\ReportApi.UnitTest.csproj", "{15C59A23-8BA8-4125-87CC-031EC6826E27}"
 EndProject
