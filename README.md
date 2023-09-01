@@ -19,6 +19,7 @@ talebi
 - Sistemin oluşturduğu raporların listelenmesi
 - Sistemin oluşturduğu bir raporun detay bilgilerinin getirilmesi
 
+#
 - Healthcheck durumu görmek için ; 
 > Contact Healthcheck : http://localhost:5002/contact-service-healthcheck
 ```
@@ -86,3 +87,5 @@ talebi
 >Contact Api swagger url = http://localhost:5002/swagger/index.html
 ##
 >Report Api Swagger url = http://localhost:5003/swagger/index.html
+ ## Kullanılan Teknolojiler 
+> .net Core 7, EFCore, PostgreSql, RabbitMq, HealthCheck , Api Versioning
