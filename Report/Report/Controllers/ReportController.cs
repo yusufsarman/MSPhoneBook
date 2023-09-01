@@ -27,7 +27,7 @@ namespace ReportApi.Controllers
 
         }
 
-        [HttpGet("GetList")]
+        [HttpGet("GetListAsync")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetListAsync()

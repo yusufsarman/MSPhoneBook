@@ -14,7 +14,7 @@ namespace ContactDetailApi.Controllers
         {
             _contactDetailService = contactDetailService;
         }
-        [HttpGet("GetByIdAsync{id}")]
+        [HttpGet("GetByIdAsync/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetByIdAsync(Guid id)
