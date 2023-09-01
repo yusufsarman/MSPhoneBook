@@ -1,8 +1,152 @@
 {
   "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/v{version}/contact",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5002
+        }
+      ],
+      "UpstreamPathTemplate": "/contacts/v{version}/CreateContact",
+      "UpstreamHttpMethod": [ "POST" ],
+      "UpstreamScheme": "http"
+    },
+    {
+      "DownstreamPathTemplate": "/api/v{version}/contact/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5002
+        }
+      ],
+      "UpstreamPathTemplate": "/contacts/v{version}/DeleteContact/{id}",
+      "UpstreamHttpMethod": [ "DELETE" ],
+      "UpstreamScheme": "http"
+    },
+    {
+      "DownstreamPathTemplate": "/api/v{version}/contact/GetByIdAsync/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5002
+        }
+      ],
+      "UpstreamPathTemplate": "/contacts/v{version}/GetByIdAsync/{id}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "UpstreamScheme": "http"
+    },
+    {
+      "DownstreamPathTemplate": "/api/v{version}/contact/GetListAsync",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5002
+        }
+      ],
+      "UpstreamPathTemplate": "/contacts/v{version}/GetListAsync",
+      "UpstreamHttpMethod": [ "GET" ],
+      "UpstreamScheme": "http"
+    },
+    {
+      "DownstreamPathTemplate": "/api/v{version}/contactDetail/GetListAsync",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5002
+        }
+      ],
+      "UpstreamPathTemplate": "/contactDetails/v{version}/GetListAsync",
+      "UpstreamHttpMethod": [ "GET" ],
+      "UpstreamScheme": "http"
+    },
+    {
+      "DownstreamPathTemplate": "/api/v{version}/contactDetail",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5002
+        }
+      ],
+      "UpstreamPathTemplate": "/contactDetails/v{version}/CreateContactDetail",
+      "UpstreamHttpMethod": [ "POST" ],
+      "UpstreamScheme": "http"
+    },
+    {
+      "DownstreamPathTemplate": "/api/v{version}/contactDetail/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5002
+        }
+      ],
+      "UpstreamPathTemplate": "/contactDetails/v{version}/DeleteContactDetail/{id}",
+      "UpstreamHttpMethod": [ "DELETE" ],
+      "UpstreamScheme": "http"
+    },
+    {
+      "DownstreamPathTemplate": "/api/v{version}/contactDetail/GetByIdAsync/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5002
+        }
+      ],
+      "UpstreamPathTemplate": "/contactDetails/v{version}/GetByIdAsync/{id}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "UpstreamScheme": "http"
+    },
     
+    //ReportApi
+    {
+      "DownstreamPathTemplate": "/api/v{version}/report/GetListAsync",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5003
+        }
+      ],
+      "UpstreamPathTemplate": "/reports/v{version}/GetListAsync",
+      "UpstreamHttpMethod": [ "GET" ],
+      "UpstreamScheme": "http"
+    },
+    {
+      "DownstreamPathTemplate": "/api/v{version}/report/GetByIdAsync/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5003
+        }
+      ],
+      "UpstreamPathTemplate": "/reports/v{version}/GetByIdAsync/{id}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "UpstreamScheme": "http"
+    },
+    {
+      "DownstreamPathTemplate": "/api/v{version}/report",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5003
+        }
+      ],
+      "UpstreamPathTemplate": "/reports/v{version}/report",
+      "UpstreamHttpMethod": [ "POST" ],
+      "UpstreamScheme": "http"
+    }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "http://phb.api:5164"
+    "BaseUrl": "http://localhost:5292"
   }
 }
