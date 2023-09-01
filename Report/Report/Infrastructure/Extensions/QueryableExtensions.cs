@@ -7,7 +7,7 @@ namespace ReportApi.Infrastructure.Extensions
     {
         public static IQueryable<T> IncludeAndWhereId<T>(
             this IQueryable<T> queryable,
-            int id,
+            Guid id,
             params Expression<Func<T, object>>[] includes) where T : class
         {
             foreach (var include in includes)

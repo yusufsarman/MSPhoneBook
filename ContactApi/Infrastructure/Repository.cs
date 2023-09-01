@@ -29,7 +29,7 @@ namespace ContactApi.Infrastructure
             return await _dbContext.Set<T>().Where(predicate).ToListAsync();
         }
 
-        public async Task<T> GetById(int id, params Expression<Func<T, object>>[] includes)
+        public async Task<T> GetById(Guid id, params Expression<Func<T, object>>[] includes)
         {
            
             return await _dbContext.Set<T>().IncludeAndWhereId(id, includes).FirstOrDefaultAsync();
@@ -50,7 +50,7 @@ namespace ContactApi.Infrastructure
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task Delete(int id)
+        public async Task Delete(Guid id)
         {
             var data = await _dbContext.Set<T>().FindAsync(id);
             if (data != null)

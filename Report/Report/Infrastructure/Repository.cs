@@ -29,7 +29,7 @@ namespace ReportApi.Infrastructure
             return await _dbContext.Set<T>().Where(predicate).ToListAsync();
         }
 
-        public async Task<T> GetById(int id, params Expression<Func<T, object>>[] includes)
+        public async Task<T> GetById(Guid id, params Expression<Func<T, object>>[] includes)
         {
            
             return await _dbContext.Set<T>().IncludeAndWhereId(id, includes).FirstOrDefaultAsync();

@@ -6,6 +6,6 @@ namespace ReportApi.Model.ValidateObjects
     {
         [Required(ErrorMessage = "Id is required.")]
         [Range(1, int.MaxValue, ErrorMessage = "Value must be greater than 0.")]
-        public int? Id { get; set; }
+        public Guid Id { get; set; }
     }
 }

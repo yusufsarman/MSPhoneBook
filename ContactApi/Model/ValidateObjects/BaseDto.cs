@@ -5,7 +5,7 @@ namespace ContactApi.Model.ValidateObjects
     public class BaseDto
     {
         [Required(ErrorMessage = "Id is required.")]
-        [Range(1, int.MaxValue, ErrorMessage = "Value must be greater than 0.")]
-        public int? Id { get; set; }
+        [RegularExpression(@"^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$", ErrorMessage = "Invalid Id format.")]
+        public Guid Id { get; set; }
     }
 }

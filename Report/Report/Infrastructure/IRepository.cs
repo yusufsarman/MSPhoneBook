@@ -6,7 +6,7 @@ namespace ReportApi.Infrastructure
     {
         Task<IEnumerable<T>> GetAll(params Expression<Func<T, object>>[] includes);
         Task<IEnumerable<T>> Find(Expression<Func<T, bool>> predicate);
-        Task<T> GetById(int id, params Expression<Func<T, object>>[] includes);
+        Task<T> GetById(Guid id, params Expression<Func<T, object>>[] includes);
         Task<T> Add(T entity);
         Task Update(T entity);
         Task Delete(int id);

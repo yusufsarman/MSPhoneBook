@@ -17,9 +17,9 @@ namespace ContactDetailApi.Controllers
         [HttpGet("GetByIdAsync{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetByIdAsync(int id)
+        public async Task<IActionResult> GetByIdAsync(Guid id)
         {
-            if (id > 0)
+            if (id != Guid.Empty)
             {
                 try
                 {
@@ -88,9 +88,9 @@ namespace ContactDetailApi.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteAsync(int id)
+        public async Task<IActionResult> DeleteAsync(Guid id)
         {
-            if (id > 0)
+            if (id != Guid.Empty)
             {
                 try
                 {

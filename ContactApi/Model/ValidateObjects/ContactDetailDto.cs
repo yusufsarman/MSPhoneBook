@@ -7,9 +7,7 @@ namespace ContactApi.Model.ValidateObjects
     public class ContactDetailDto : BaseDto
     {
 
-        [Required(ErrorMessage = "ContactId is required.")]
-        [Range(1, int.MaxValue, ErrorMessage = "Value must be greater than 0.")]
-        public int? ContactId { get; set; }
+         public Guid? ContactId { get; set; }
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
         [EnumDataType(typeof(ContactDetailTypeEnum), ErrorMessage = "Invalid ContactDetailType.")]

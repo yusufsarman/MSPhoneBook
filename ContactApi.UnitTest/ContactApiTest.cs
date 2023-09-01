@@ -41,8 +41,9 @@ namespace ContactApi.UnitTest
         [TestMethod]
         public async Task Contact_GetListAsync_Status200()
         {
+            var contactGuid = Guid.NewGuid();
             _contactServiceMock.Setup(x => x.GetListAsync())
-             .Returns(Task.FromResult(GetContactsFoo()));
+             .Returns(Task.FromResult(GetContactsFoo(contactGuid)));
             
             
             var actionResult = await _contactController.GetListAsync();
@@ -56,7 +57,7 @@ namespace ContactApi.UnitTest
         [TestMethod]
         public async Task Contact_GetByIdAsync_Status200()
         {
-            int contactId = 5;
+            Guid contactId = Guid.NewGuid();
             _contactServiceMock.Setup(x => x.GetContactByIdAsync(contactId))
              .Returns(Task.FromResult(GetContactFoo(contactId)));
 
@@ -119,8 +120,8 @@ namespace ContactApi.UnitTest
         [TestMethod]
         public async Task Contact_CreateAsync_Status201()
         {
-            int contactId = 5;
-            var contactInfo = GetContactCreateFoo(contactId);
+            var contactId = Guid.NewGuid();
+            var contactInfo = GetContactCreateFoo();
             _contactServiceMock.Setup(x => x.CreateContactAsync(contactInfo))
              .Returns(Task.FromResult(GetContactFoo(contactId)));
 
@@ -138,7 +139,7 @@ namespace ContactApi.UnitTest
         [TestMethod]
         public async Task Contact_DeleteContactByIdAsync_Status204()
         {
-            int contactId = 5;
+            var contactId = Guid.NewGuid();
             
             _contactServiceMock.Setup(x => x.DeleteContactByIdAsync(contactId))
              .Returns(Task.FromResult(true));
@@ -149,27 +150,27 @@ namespace ContactApi.UnitTest
 
             Assert.AreEqual(objectResult.StatusCode, (int)System.Net.HttpStatusCode.NoContent);          
         }
-        private List<ContactDto> GetContactsFoo()
+        private List<ContactDto> GetContactsFoo(Guid id)
         {
             return new List<ContactDto>
          {
            new ContactDto
            {
-               Id=5,
+               Id=id,
                Name = "Ahmet",
                Surname = "C",
                Company = "Turkcell",
            },
             new ContactDto
            {
-               Id=6,
+               Id=id,
                Name = "Mehmet",
                Surname = "Y",
                Company = "Ford",
            },
         };
         }
-        private ContactDto GetContactFoo(int id)
+        private ContactDto GetContactFoo(Guid id)
         {
             return new ContactDto
             {
@@ -179,7 +180,7 @@ namespace ContactApi.UnitTest
                 Company = "Turkcell",
             };
         }
-        private ContactCreateDto GetContactCreateFoo(int id)
+        private ContactCreateDto GetContactCreateFoo()
         {
             return new ContactCreateDto
             {                

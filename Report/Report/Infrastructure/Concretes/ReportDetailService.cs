@@ -4,8 +4,9 @@ using ReportApi.Model.ValidateObjects;
 namespace ReportApi.Infrastructure.Concretes
 {
     public class ReportDetailService : IReportDetailService
-    {
-        public Task CreateReportDetailsAsync(IList<ReportDetailDto> reportDetails)
+    {        
+
+        public Task CreateReportDetailsAsync(IList<ReportDetailCreateDto> reportDetails)
         {
             throw new NotImplementedException();
         }

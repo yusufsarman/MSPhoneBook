@@ -49,17 +49,15 @@ namespace ReportApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("EmailCount")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("EmailCount")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Location")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("PhoneCount")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("PhoneCount")
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("ReportId")
                         .HasColumnType("uuid");

@@ -5,8 +5,8 @@ namespace ContactApi.Infrastructure.Interfaces
     public interface IContactDetailService
     {
         Task<ContactDetailDto> CreateContactDetailAsync(ContactDetailCreateDto addContactDetail);
-        Task<ContactDetailDto> GetContactDetailByIdAsync(int contactId);
-        Task DeleteContactDetailByIdAsync(int id);
+        Task<ContactDetailDto> GetContactDetailByIdAsync(Guid contactId);
+        Task DeleteContactDetailByIdAsync(Guid id);
         Task<List<ContactDetailDto>> GetListAsync();
     }
 }

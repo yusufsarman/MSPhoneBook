@@ -5,7 +5,8 @@ namespace ReportApi.Infrastructure.Interfaces
     public interface IReportService
     {
         Task<ReportDto> CreateReportAsync();
-        Task<ReportDto> GetReportByIdAsync(int reportId);
+        Task<ReportDto> GetReportByIdAsync(Guid reportId);
         Task<List<ReportDto>> GetListAsync();
+        Task ReportCompletedAsync(Guid id);
     }
 }

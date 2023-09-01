@@ -7,9 +7,9 @@ namespace ContactApi.Model.ValidateObjects
 {
     public class ContactDetailCreateDto
     {
-        [Required(ErrorMessage = "ContactId is required.")]
-        [Range(1, int.MaxValue, ErrorMessage = "Value must be greater than 0.")]
-        public int? ContactId { get; set; }
+        [Required(ErrorMessage = "Id is required.")]
+        [RegularExpression(@"^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$", ErrorMessage = "Invalid Id format.")]
+        public Guid? ContactId { get; set; }
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
         [EnumDataType(typeof(ContactDetailTypeEnum), ErrorMessage = "Invalid ContactDetailType.")]

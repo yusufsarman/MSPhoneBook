@@ -12,8 +12,8 @@ using ReportApi.Infrastructure;
 namespace ReportApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230901014057_initial")]
-    partial class initial
+    [Migration("20230901033229_reinitial")]
+    partial class reinitial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -52,17 +52,15 @@ namespace ReportApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("EmailCount")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("EmailCount")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Location")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("PhoneCount")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("PhoneCount")
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("ReportId")
                         .HasColumnType("uuid");

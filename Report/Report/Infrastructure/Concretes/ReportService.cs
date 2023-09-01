@@ -22,7 +22,7 @@ namespace ReportApi.Infrastructure.Concretes
         {
             Report report = new Report
             {
-                CreateTime = DateTime.Now,
+                CreateTime = DateTime.UtcNow,
                 Status = StatusEnum.Prepararing
             };
             var data = await _reportRepository.Add(report);
@@ -35,10 +35,17 @@ namespace ReportApi.Infrastructure.Concretes
             return _mapper.Map<List<ReportDto>>(data);
         }
 
-        public async Task<ReportDto> GetReportByIdAsync(int reportId)
+        public async Task<ReportDto> GetReportByIdAsync(Guid reportId)
         {
             var data = await _reportRepository.GetById(reportId, c => c.ReportDetail);
             return _mapper.Map<ReportDto>(data);
+        }
+
+        public async Task ReportCompletedAsync(Guid id)
+        {
+            var data = await _reportRepository.GetById(id);
+            data.Status = StatusEnum.Completed;
+            await _reportRepository.Update(data);
         }
     }
 }

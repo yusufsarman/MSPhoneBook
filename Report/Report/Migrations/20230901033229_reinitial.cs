@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ReportApi.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class reinitial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,8 +32,8 @@ namespace ReportApi.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     ReportId = table.Column<Guid>(type: "uuid", nullable: false),
                     Location = table.Column<string>(type: "text", nullable: false),
-                    PhoneCount = table.Column<string>(type: "text", nullable: false),
-                    EmailCount = table.Column<string>(type: "text", nullable: false)
+                    PhoneCount = table.Column<int>(type: "integer", nullable: false),
+                    EmailCount = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {

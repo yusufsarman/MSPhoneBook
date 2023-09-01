@@ -2,9 +2,7 @@
 using EventBus.Base.Abstraction;
 using Microsoft.AspNetCore.Mvc;
 using ReportApi.Infrastructure.Interfaces;
-using ReportApi.Model.ValidateObjects;
-using System.Net;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using ReportApi.IntegrationEvents.Events;
 
 namespace ReportApi.Controllers
 {
@@ -52,9 +50,9 @@ namespace ReportApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetByIdAsync(int id)
+        public async Task<IActionResult> GetByIdAsync(Guid id)
         {
-            if (id > 0)
+            if (id != Guid.Empty)
             {
                 try
                 {
@@ -75,7 +73,7 @@ namespace ReportApi.Controllers
             }
             else
             {
-                return BadRequest("Id must be greater than 0");
+                return BadRequest("Id must be a valid Guid");
             }
 
 
@@ -87,18 +85,14 @@ namespace ReportApi.Controllers
         public async Task<IActionResult> CreateAsync()
         {
             try
-            {               
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState); // Return validation errors
-                }
-
+            { 
                 var report = await _reportService.CreateReportAsync();
                 if (report == null)
                     return BadRequest();
+                var reportStartedEventModel = new ReportStartingEvent(report.Id);
+                _eventBus.Publish(reportStartedEventModel);
 
-                //Event Handling
-                return Ok();
+                return CreatedAtAction(nameof(GetByIdAsync), new { id = report.Id }, report); // 201 Created
             }
             catch (Exception ex)
             {
