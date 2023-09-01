@@ -5,7 +5,7 @@
         public Guid ReportId { get; set; }
         public Report Report { get; set; }
         public string Location  { get; set; }
-        public string PhoneCount  { get; set; }
-        public string EmailCount { get; set; }
+        public int PhoneCount  { get; set; }
+        public int EmailCount { get; set; }
     }
 }

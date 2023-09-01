@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using ReportApi.Infrastructure.Concretes;
+using ReportApi.Infrastructure.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,8 +28,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-//builder.Services.AddTransient(typeof(IContactService), typeof(ContactService));
-//builder.Services.AddTransient(typeof(IContactDetailService), typeof(ContactDetailService));
+builder.Services.AddTransient(typeof(IReportService), typeof(ReportService));
+builder.Services.AddTransient(typeof(IReportDetailService), typeof(ReportDetailService));
 var app = builder.Build();
 app.UseHealthChecks("/report-service-healthcheck", new HealthCheckOptions
 {
