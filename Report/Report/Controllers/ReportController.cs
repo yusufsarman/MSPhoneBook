@@ -12,7 +12,7 @@ namespace ReportApi.Controllers
 
         [HttpGet("GetList")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetList()
+        public async Task<IActionResult> GetListAsync()
         {
             // Get all reports and return
 
