@@ -2,6 +2,7 @@
 using EventBus.Base.Abstraction;
 using Microsoft.AspNetCore.Mvc;
 using ReportApi.Infrastructure.Interfaces;
+using ReportApi.Model.ValidateObjects;
 using System.Net;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -30,6 +31,7 @@ namespace ReportApi.Controllers
 
         [HttpGet("GetList")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetListAsync()
         {
             try
@@ -49,6 +51,7 @@ namespace ReportApi.Controllers
         [HttpGet("GetByIdAsync/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetByIdAsync(int id)
         {
             if (id > 0)
@@ -81,17 +84,21 @@ namespace ReportApi.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateAsync([FromBody] int contact)
+        public async Task<IActionResult> CreateAsync()
         {
             try
-            {
+            {               
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState); // Return validation errors
+                }
+
+                var report = await _reportService.CreateReportAsync();
+                if (report == null)
+                    return BadRequest();
+
+                //Event Handling
                 return Ok();
-                //if (!ModelState.IsValid)
-                //{
-                //    return BadRequest(ModelState); // Return validation errors
-                //}
-                //ContactDto data = await _contactService.CreateContactAsync(contact);
-                //return CreatedAtAction(nameof(GetByIdAsync), new { id = data.Id }, data); // 201 Created
             }
             catch (Exception ex)
             {

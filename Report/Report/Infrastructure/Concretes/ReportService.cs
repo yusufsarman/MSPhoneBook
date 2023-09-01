@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using ReportApi.Entities;
+using ReportApi.Enums;
 using ReportApi.Infrastructure.Interfaces;
 using ReportApi.Model.ValidateObjects;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ReportApi.Infrastructure.Concretes
 {
@@ -16,9 +18,15 @@ namespace ReportApi.Infrastructure.Concretes
             _reportRepository = reportRepository;
             _mapper = mapper;
         }
-        public Task<ReportDto> CreateReportAsync(ReportCreateDto addReport)
+        public async Task<ReportDto> CreateReportAsync()
         {
-            throw new NotImplementedException();
+            Report report = new Report
+            {
+                CreateTime = DateTime.Now,
+                Status = StatusEnum.Prepararing
+            };
+            var data = await _reportRepository.Add(report);
+            return _mapper.Map<ReportDto>(data);
         }
 
         public async Task<List<ReportDto>> GetListAsync()
