@@ -89,3 +89,5 @@ talebi
 >Report Api Swagger url = http://localhost:5003/swagger/index.html
  ## Kullanılan Teknolojiler 
 > .net Core 7, EFCore, PostgreSql, RabbitMq, HealthCheck , Api Versioning
+## Test Sonuçları
+![image](https://github.com/yusufsarman/MSPhoneBook/assets/22871476/686ad239-c8dc-4d46-87cb-c84a19c18bb6)
