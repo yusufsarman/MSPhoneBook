@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using EventBus.Base.Abstraction;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using ReportApi.Controllers;
@@ -13,6 +15,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
+using YamlDotNet.Core.Tokens;
 
 namespace ReportApi.UnitTest
 {
@@ -54,6 +58,50 @@ namespace ReportApi.UnitTest
             Assert.IsInstanceOfType(response,typeof(List<ReportDto>));
         }
         [TestMethod]
+        public async Task Report_GetListAsync_Status400()
+        {
+            var ReportGuid = Guid.NewGuid();
+            _ReportServiceMock.Setup(x => x.GetListAsync()).ThrowsAsync(new Exception("Error"));
+
+
+            var actionResult = await _ReportController.GetListAsync();
+
+
+            var objectResult = (BadRequestObjectResult)actionResult;
+            Assert.AreEqual(objectResult.StatusCode, (int)System.Net.HttpStatusCode.BadRequest);
+            
+        }
+        [TestMethod]
+        public async Task Report_GetListAsync_ReturnsValidData()
+        {
+            var ReportGuid = Guid.NewGuid();
+            var expectedData = GetReportsFoo(ReportGuid);
+
+            _ReportServiceMock.Setup(x => x.GetListAsync())
+             .Returns(Task.FromResult(expectedData));
+
+
+            var actionResult = await _ReportController.GetListAsync();
+
+
+            var objectResult = (OkObjectResult)actionResult;
+            var response = (List<ReportDto>)objectResult.Value;
+            Assert.AreEqual(expectedData, response);
+        }
+        [TestMethod]
+        public async Task GetListAsync_HandlesNullData()
+        {
+             _ReportServiceMock.Setup(x => x.GetListAsync())
+            .ReturnsAsync((List<ReportDto>)null);
+
+
+            var actionResult = await _ReportController.GetListAsync();
+            var objectResult = (OkObjectResult)actionResult;
+            var response = (List<ReportDto>)objectResult.Value;
+            Assert.AreEqual(objectResult.StatusCode, (int)System.Net.HttpStatusCode.OK);
+            Assert.IsNull(response);
+        }        
+        [TestMethod]
         public async Task Report_GetByIdAsync_Status200()
         {
             var ReportGuid = Guid.NewGuid();
@@ -69,24 +117,50 @@ namespace ReportApi.UnitTest
             Assert.AreEqual(objectResult.StatusCode, (int)System.Net.HttpStatusCode.OK);
             Assert.IsInstanceOfType(response, typeof(ReportDto));
         }
+        
         [TestMethod]
-        public async Task Report_GetByIdAsync_Status404()
+        public async Task Report_GetByIdAsync_EmptyGuidwithErrorTextStatus400()
+        {
+            var actionResult = await _ReportController.GetByIdAsync(Guid.Empty);
+
+
+            var objectResult = (BadRequestObjectResult)actionResult;
+
+            Assert.AreEqual(objectResult.StatusCode, (int)System.Net.HttpStatusCode.BadRequest);
+            Assert.AreEqual("Id must be a valid Guid", objectResult.Value);
+        }
+        [TestMethod]
+        public async Task Report_GetByIdAsync_HandleNullDataStatus204()
         {
             var ReportGuid = Guid.NewGuid();
             _ReportServiceMock.Setup(x => x.GetReportByIdAsync(It.IsAny<Guid>()))
              .Returns(Task.FromResult((ReportDto?)null));
+            var actionResult = await _ReportController.GetByIdAsync(ReportGuid);
+
+            var objectResult = (NoContentResult)actionResult;
+
+            Assert.AreEqual(objectResult.StatusCode, (int)System.Net.HttpStatusCode.NoContent);
+            
+        }
+        [TestMethod]
+        public async Task Report_GetByIdAsync_ReturnsValidData()
+        {
+            var ReportGuid = Guid.NewGuid();
+            var expectedData = GetReportFoo(ReportGuid);
+
+            _ReportServiceMock.Setup(x => x.GetReportByIdAsync(ReportGuid))
+             .Returns(Task.FromResult(expectedData));
 
 
             var actionResult = await _ReportController.GetByIdAsync(ReportGuid);
 
 
-            var objectResult = (NotFoundResult)actionResult;
-            
-            Assert.AreEqual(objectResult.StatusCode, (int)System.Net.HttpStatusCode.NotFound);
+            var objectResult = (OkObjectResult)actionResult;
+            var response = (ReportDto)objectResult.Value;
+            Assert.AreEqual(expectedData, response);
         }
-
         [TestMethod]
-        public async Task Report_CreateAsync_Status200()
+        public async Task Report_CreateAsync_Status201()
         {
             var ReportGuid = Guid.NewGuid();
             _ReportServiceMock.Setup(x => x.CreateReportAsync())
@@ -105,6 +179,20 @@ namespace ReportApi.UnitTest
         public async Task Report_CreateAsync_Status400()
         {
             var ReportGuid = Guid.NewGuid();
+            _ReportServiceMock.Setup(x => x.CreateReportAsync()).ThrowsAsync(new Exception("Error"));
+             
+
+
+            var actionResult = await _ReportController.CreateAsync();
+
+
+            var objectResult = (BadRequestObjectResult)actionResult;
+            Assert.AreEqual(objectResult.StatusCode, (int)System.Net.HttpStatusCode.BadRequest);
+        }
+        [TestMethod]
+        public async Task Report_CreateAsync_Status204()
+        {
+            var ReportGuid = Guid.NewGuid();
             _ReportServiceMock.Setup(x => x.CreateReportAsync())
              .Returns(Task.FromResult((ReportDto?)null));
 
@@ -112,10 +200,26 @@ namespace ReportApi.UnitTest
             var actionResult = await _ReportController.CreateAsync();
 
 
-            var objectResult = (BadRequestResult)actionResult;
-            Assert.AreEqual(objectResult.StatusCode, (int)System.Net.HttpStatusCode.BadRequest);
+            var objectResult = (NoContentResult)actionResult;
+            Assert.AreEqual(objectResult.StatusCode, (int)System.Net.HttpStatusCode.NoContent);
         }
-       
+        [TestMethod]
+        public async Task Report_CreateAsync_ReturnsValidData()
+        {
+            var ReportGuid = Guid.NewGuid();
+            var expectedData = GetReportFoo(ReportGuid);
+
+            _ReportServiceMock.Setup(x => x.CreateReportAsync())
+             .Returns(Task.FromResult(expectedData));
+
+
+            var actionResult = await _ReportController.CreateAsync();
+
+
+            var objectResult = (ObjectResult)actionResult;
+            var response = (ReportDto)objectResult.Value;
+            Assert.AreEqual(expectedData, response);
+        }
         private List<ReportDto> GetReportsFoo(Guid id)
         {
             return new List<ReportDto>
