@@ -1,13 +1,16 @@
 using ContactApi.Infrastructure;
 using ContactApi.Infrastructure.Concretes;
 using ContactApi.Infrastructure.Interfaces;
+using ContactApi.IoC;
 using ContactApi.Mapping;
 using ContactDetailApi.Infrastructure.Concretes;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using MSPhoneBook.Shared.Middlewares.Errors;
 
 var builder = WebApplication.CreateBuilder(args);
 {
@@ -23,9 +26,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddMvc(options =>
     {
         options.SuppressAsyncSuffixInActionNames = false;
-    });
-    builder.Services.AddDbContext<AppDbContext>(
-        options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    });    
 
     builder.Services.AddHealthChecks()
             .AddNpgSql(
@@ -40,14 +41,18 @@ var builder = WebApplication.CreateBuilder(args);
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
-    builder.Services.AddAutoMapper(typeof(MappingProfile));
-    builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+    builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+    builder.Services.AddSingleton(typeof(AppDbContextFactory));
+    builder.Services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
     builder.Services.AddTransient(typeof(IContactService), typeof(ContactService));
     builder.Services.AddTransient(typeof(IContactDetailService), typeof(ContactDetailService));
+
+    builder.ConfigureRabbitMQ();
 }
 
 var app = builder.Build();
 {
+    app.ConfigureEventBusForSubscription();
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
     {
@@ -58,6 +63,7 @@ var app = builder.Build();
     {
         ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
     });
+    app.UseMiddleware<ErrorHandlerMiddleware>();
     app.UseHttpsRedirection();
 
     app.UseAuthorization();

@@ -48,7 +48,7 @@ namespace ReportApi.Controllers
 
         [HttpGet("GetByIdAsync/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetByIdAsync(Guid id)
         {
@@ -58,7 +58,7 @@ namespace ReportApi.Controllers
                 {
                     var report = await _reportService.GetReportByIdAsync(id);
                     if (report == null)
-                        return NotFound();
+                        return UnprocessableEntity();
 
                     return Ok(report);
                    
@@ -81,6 +81,7 @@ namespace ReportApi.Controllers
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateAsync()
         {
@@ -88,8 +89,8 @@ namespace ReportApi.Controllers
             { 
                 var report = await _reportService.CreateReportAsync();
                 if (report == null)
-                    return BadRequest();
-                var reportStartedEventModel = new ReportStartingEvent(report.Id);
+                    return UnprocessableEntity(new { error = "Report model is null." });
+                var reportStartedEventModel = new ReportStartedIntegrationEvent(report.Id);
                 _eventBus.Publish(reportStartedEventModel);
 
                 return CreatedAtAction(nameof(GetByIdAsync), new { id = report.Id }, report); // 201 Created

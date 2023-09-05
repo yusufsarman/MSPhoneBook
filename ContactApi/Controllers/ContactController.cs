@@ -16,7 +16,8 @@ namespace ContactApi.Controllers
         }
         [HttpGet("GetByIdAsync/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetByIdAsync(Guid id)
         {
             if (id != Guid.Empty)
@@ -26,7 +27,7 @@ namespace ContactApi.Controllers
                     ContactDto contact = await _contactService.GetContactByIdAsync(id);
                     if (contact == null)
                     {
-                        return NotFound(); // 404 Not Found
+                        return UnprocessableEntity(); // 204 Not Found
                     }
 
                     return Ok(contact); // 200 OK
@@ -41,7 +42,7 @@ namespace ContactApi.Controllers
             }
             else
             {
-                return BadRequest();
+                return BadRequest("Id must be a valid Guid");
             }
 
 
@@ -49,6 +50,7 @@ namespace ContactApi.Controllers
 
         [HttpGet("GetListAsync")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetListAsync()
         {
             try
@@ -67,6 +69,7 @@ namespace ContactApi.Controllers
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateAsync([FromBody] ContactCreateDto contact)
         {
@@ -77,6 +80,10 @@ namespace ContactApi.Controllers
                     return BadRequest(ModelState); // Return validation errors
                 }
                 ContactDto data = await _contactService.CreateContactAsync(contact);
+                if (data == null)
+                {
+                    return UnprocessableEntity();
+                }
                 return CreatedAtAction(nameof(GetByIdAsync), new { id = data.Id }, data); // 201 Created
             }
             catch (Exception ex)
@@ -87,7 +94,7 @@ namespace ContactApi.Controllers
         }
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteAsync(Guid id)
         {
             if (id != Guid.Empty)
@@ -106,7 +113,7 @@ namespace ContactApi.Controllers
             }
             else
             {
-                return BadRequest();
+                return BadRequest("Id must be a valid Guid");
             }
 
 

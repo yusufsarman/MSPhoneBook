@@ -41,7 +41,7 @@ namespace ContactDetailApi.Controllers
             }
             else
             {
-                return BadRequest();
+                return BadRequest("Id must be a valid Guid");
             }
             
              
@@ -49,6 +49,7 @@ namespace ContactDetailApi.Controllers
 
         [HttpGet("GetListAsync")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetListAsync()
         {
             try
@@ -68,6 +69,7 @@ namespace ContactDetailApi.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<IActionResult> CreateAsync([FromBody] ContactDetailCreateDto contactDetail)
         {
             try
@@ -77,6 +79,8 @@ namespace ContactDetailApi.Controllers
                     return BadRequest(ModelState); // Return validation errors
                 }
                 ContactDetailDto data = await _contactDetailService.CreateContactDetailAsync(contactDetail);
+                if (data == null)
+                    return UnprocessableEntity();
                 return CreatedAtAction(nameof(GetByIdAsync), new { id = data.Id }, data); // 201 Created
             }
             catch (Exception ex )
@@ -106,7 +110,7 @@ namespace ContactDetailApi.Controllers
             }
             else
             {
-                return BadRequest();
+                return BadRequest("Id must be a valid Guid");
             }
 
             

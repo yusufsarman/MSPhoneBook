@@ -6,11 +6,10 @@ using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using ReportApi.Infrastructure.Concretes;
 using ReportApi.Infrastructure.Interfaces;
-using EventBus.Base;
-using RabbitMQ.Client;
-using ReportApi.IntegrationEvents.Handlers;
-using EventBus.Factory;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+
+using ReportApi.IoC;
+using MSPhoneBook.Shared.Middlewares.Errors;
 
 var builder = WebApplication.CreateBuilder(args);
 {
@@ -26,9 +25,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddMvc(options =>
     {
         options.SuppressAsyncSuffixInActionNames = false;
-    });
-    builder.Services.AddDbContext<AppDbContext>(
-       options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    });   
     builder.Services.AddHealthChecks()
            .AddNpgSql(
        connectionString: builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -39,35 +36,15 @@ var builder = WebApplication.CreateBuilder(args);
    name: "RabbitMQ HealthCheck",
    failureStatus: HealthStatus.Unhealthy | HealthStatus.Healthy,
    tags: new string[] { "rabbitmq" });
-
+    
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
-    builder.Services.AddAutoMapper(typeof(MappingProfile));
-    builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+    builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+    builder.Services.AddSingleton(typeof(AppDbContextFactory));
+    builder.Services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
     builder.Services.AddTransient(typeof(IReportService), typeof(ReportService));
     builder.Services.AddTransient(typeof(IReportDetailService), typeof(ReportDetailService));
-
-    builder.Services.AddSingleton(sp =>
-    {
-        EventBusConfig config = new()
-        {
-            ConnectionRetryCount = 5,
-            EventNameSuffix = builder.Configuration.GetValue<string>("RabbitMQConfig:EventNameSuffix"),
-            SubscriberClientAppName = builder.Configuration.GetValue<string>("RabbitMQConfig:SubscriberClientAppName"),
-            Connection = new ConnectionFactory()
-            {
-                HostName = builder.Configuration.GetValue<string>("RabbitMQConfig:HostName"),
-                Port = builder.Configuration.GetValue<int>("RabbitMQConfig:Port")
-            },
-            EventBusType = EventBusType.RabbitMQ,
-
-        };
-
-        return EventBusFactory.Create(config, sp);
-    });
-
-
-    builder.Services.AddTransient<ReportCreatingEventHandler>();
+    builder.ConfigureRabbitMQ();
 }
 
 var app = builder.Build();
@@ -81,9 +58,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.ConfigureEventBusForSubscription();
 app.UseHttpsRedirection();
-
+app.UseMiddleware<ErrorHandlerMiddleware>();
 app.UseAuthorization();
 
 app.MapControllers();
