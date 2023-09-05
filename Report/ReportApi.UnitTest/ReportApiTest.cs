@@ -130,16 +130,16 @@ namespace ReportApi.UnitTest
             Assert.AreEqual("Id must be a valid Guid", objectResult.Value);
         }
         [TestMethod]
-        public async Task Report_GetByIdAsync_HandleNullDataStatus204()
+        public async Task Report_GetByIdAsync_HandleNullDataStatus422()
         {
             var ReportGuid = Guid.NewGuid();
             _ReportServiceMock.Setup(x => x.GetReportByIdAsync(It.IsAny<Guid>()))
              .Returns(Task.FromResult((ReportDto?)null));
             var actionResult = await _ReportController.GetByIdAsync(ReportGuid);
 
-            var objectResult = (NoContentResult)actionResult;
+            var objectResult = (UnprocessableEntityResult)actionResult;
 
-            Assert.AreEqual(objectResult.StatusCode, (int)System.Net.HttpStatusCode.NoContent);
+            Assert.AreEqual(objectResult.StatusCode, (int)System.Net.HttpStatusCode.UnprocessableEntity);
             
         }
         [TestMethod]
@@ -190,7 +190,7 @@ namespace ReportApi.UnitTest
             Assert.AreEqual(objectResult.StatusCode, (int)System.Net.HttpStatusCode.BadRequest);
         }
         [TestMethod]
-        public async Task Report_CreateAsync_Status204()
+        public async Task Report_CreateAsync_Status422()
         {
             var ReportGuid = Guid.NewGuid();
             _ReportServiceMock.Setup(x => x.CreateReportAsync())
@@ -200,8 +200,8 @@ namespace ReportApi.UnitTest
             var actionResult = await _ReportController.CreateAsync();
 
 
-            var objectResult = (NoContentResult)actionResult;
-            Assert.AreEqual(objectResult.StatusCode, (int)System.Net.HttpStatusCode.NoContent);
+            var objectResult = (UnprocessableEntityObjectResult)actionResult;
+            Assert.AreEqual(objectResult.StatusCode, (int)System.Net.HttpStatusCode.UnprocessableEntity);
         }
         [TestMethod]
         public async Task Report_CreateAsync_ReturnsValidData()

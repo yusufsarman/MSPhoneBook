@@ -9,6 +9,10 @@ namespace ContactApi.Model.ValidateObjects
 {
     public class ContactDetailCreateDto
     {
+        public ContactDetailCreateDto()
+        {
+        }
+
         public ContactDetailCreateDto(Guid? contactId, ContactDetailTypeEnum contactDetailType, string content)
         {
             ContactId = contactId;
