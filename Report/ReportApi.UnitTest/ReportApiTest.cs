@@ -230,7 +230,7 @@ namespace ReportApi.UnitTest
                Status =Enums.StatusEnum.Completed,
                CreateTime = DateTime.Now,
                CompletionTime = DateTime.Now,
-               ReportDetails=new List<ReportDetailDto>
+               ReportDetail=new List<ReportDetailDto>
                {
                    new ReportDetailDto
                    {
@@ -256,7 +256,7 @@ namespace ReportApi.UnitTest
                Status =Enums.StatusEnum.Prepararing,
                CreateTime = DateTime.Now,
                CompletionTime = null,
-               ReportDetails=new List<ReportDetailDto>()
+               ReportDetail=new List<ReportDetailDto>()
                
            }
         };
@@ -269,7 +269,7 @@ namespace ReportApi.UnitTest
                 Status = Enums.StatusEnum.Completed,
                 CreateTime = DateTime.Now,
                 CompletionTime = DateTime.Now,
-                ReportDetails = new List<ReportDetailDto>
+                ReportDetail = new List<ReportDetailDto>
                {
                    new ReportDetailDto
                    {

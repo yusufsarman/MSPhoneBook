@@ -8,6 +8,7 @@ using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using MSPhoneBook.Shared.Middlewares.Errors;
 
@@ -25,9 +26,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddMvc(options =>
     {
         options.SuppressAsyncSuffixInActionNames = false;
-    });
-    builder.Services.AddDbContext<AppDbContext>(
-        options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    });    
 
     builder.Services.AddHealthChecks()
             .AddNpgSql(
@@ -39,14 +38,16 @@ var builder = WebApplication.CreateBuilder(args);
     name: "RabbitMQ HealthCheck",
     failureStatus: HealthStatus.Unhealthy | HealthStatus.Healthy,
     tags: new string[] { "rabbitmq" });
-    builder.ConfigureRabbitMQ();
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
-    builder.Services.AddAutoMapper(typeof(MappingProfile));
-    builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+    builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+    builder.Services.AddSingleton(typeof(AppDbContextFactory));
+    builder.Services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
     builder.Services.AddTransient(typeof(IContactService), typeof(ContactService));
     builder.Services.AddTransient(typeof(IContactDetailService), typeof(ContactDetailService));
+
+    builder.ConfigureRabbitMQ();
 }
 
 var app = builder.Build();

@@ -1,20 +1,17 @@
-﻿using Polly;
+﻿using EventBus.Base;
+using EventBus.Base.Events;
+using Newtonsoft.Json;
+using Polly;
+using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Client.Exceptions;
-using RabbitMQ.Client;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
-using EventBus.Base.Events;
-using EventBus.Base;
-using Newtonsoft.Json;
 
 namespace EventBus.RabbitMQ
 {
-    public class EventBusRabbitMQ : BaseEventBus
+  public class EventBusRabbitMQ : BaseEventBus
     {
         RabbitMQPersistentConnection persistentConnection;
         private readonly IConnectionFactory connectionFactory;

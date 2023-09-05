@@ -8,6 +8,7 @@ namespace ContactApi.Infrastructure
         Task<IEnumerable<T>> Find(Expression<Func<T, bool>> predicate);
         Task<T> GetById(Guid id, params Expression<Func<T, object>>[] includes);
         Task<T> Add(T entity);
+        Task AddRange(IEnumerable<T> entity);
         Task Update(T entity);
         Task Delete(Guid id);
         IQueryable<T> Include(params Expression<Func<T, object>>[] includes);

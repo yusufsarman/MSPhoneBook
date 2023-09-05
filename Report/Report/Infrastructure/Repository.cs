@@ -6,11 +6,13 @@ namespace ReportApi.Infrastructure
 {
     public class Repository<T> : IRepository<T> where T : class
     {
+        private readonly AppDbContextFactory _dbContextFactory;
         private readonly AppDbContext _dbContext;
 
-        public Repository(AppDbContext dbContext)
+        public Repository(AppDbContextFactory dbContextFactory)
         {
-            _dbContext = dbContext;
+            _dbContextFactory = dbContextFactory;
+            _dbContext = _dbContextFactory.CreateDbContext();
         }
 
         public async Task<IEnumerable<T>> GetAll(params Expression<Func<T, object>>[] includes)
@@ -31,26 +33,30 @@ namespace ReportApi.Infrastructure
 
         public async Task<T> GetById(Guid id, params Expression<Func<T, object>>[] includes)
         {
-           
+
             return await _dbContext.Set<T>().IncludeAndWhereId(id, includes).FirstOrDefaultAsync();
 
         }
-       
+
 
         public async Task<T> Add(T entity)
         {
-           var data = await _dbContext.Set<T>().AddAsync(entity);
+            var data = await _dbContext.Set<T>().AddAsync(entity);
             await _dbContext.SaveChangesAsync();
             return data.Entity;
         }
-
+        public async Task AddRange(IEnumerable<T> entity)
+        {
+            await _dbContext.Set<T>().AddRangeAsync(entity);
+            await _dbContext.SaveChangesAsync();            
+        }
         public async Task Update(T entity)
         {
             _dbContext.Entry(entity).State = EntityState.Modified;
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task Delete(int id)
+        public async Task Delete(Guid id)
         {
             var data = await _dbContext.Set<T>().FindAsync(id);
             if (data != null)
@@ -58,7 +64,7 @@ namespace ReportApi.Infrastructure
                 _dbContext.Set<T>().Remove(data);
                 await _dbContext.SaveChangesAsync();
             }
-           
+
         }
         public IQueryable<T> Include(params Expression<Func<T, object>>[] includes)
         {

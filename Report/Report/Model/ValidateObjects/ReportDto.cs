@@ -14,6 +14,6 @@ namespace ReportApi.Model.ValidateObjects
         [EnumDataType(typeof(StatusEnum), ErrorMessage = "Invalid Status Type.")]
         public StatusEnum Status { get; set; }
 
-        public ICollection<ReportDetailDto> ReportDetails { get; set; }
+        public ICollection<ReportDetailDto> ReportDetail { get; set; }
     }
 }

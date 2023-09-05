@@ -1,16 +1,12 @@
 ﻿using Polly;
-using RabbitMQ.Client.Exceptions;
 using RabbitMQ.Client;
+using RabbitMQ.Client.Exceptions;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EventBus.RabbitMQ
 {
-    public class RabbitMQPersistentConnection : IDisposable
+  public class RabbitMQPersistentConnection : IDisposable
     {
         private readonly IConnectionFactory connectionFactory;
         private readonly int retryCount;
@@ -27,7 +23,7 @@ namespace EventBus.RabbitMQ
                 UserName = "guest",
                 Password = "guest",
                 VirtualHost = "/",
-                
+
             };
             this.retryCount = retryCount;
         }
@@ -101,5 +97,3 @@ namespace EventBus.RabbitMQ
         }
     }
 }
-
-

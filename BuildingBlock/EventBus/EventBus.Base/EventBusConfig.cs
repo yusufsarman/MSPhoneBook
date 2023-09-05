@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EventBus.Base
 {
-    public class EventBusConfig
+  public class EventBusConfig
     {
         public int ConnectionRetryCount { get; set; } = 5;
 
-        public string DefaultTopicName { get; set; } = "ContactEventBus";
+        public string DefaultTopicName { get; set; } = "ContactsEventBus";
 
         public string EventBusConnectionString { get; set; } = String.Empty;
 
@@ -30,7 +26,7 @@ namespace EventBus.Base
     }
 
     public enum EventBusType
-    {
+    { 
         RabbitMQ = 0,
         AzureServiceBus = 1
     }

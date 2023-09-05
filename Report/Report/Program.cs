@@ -25,9 +25,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddMvc(options =>
     {
         options.SuppressAsyncSuffixInActionNames = false;
-    });
-    builder.Services.AddDbContext<AppDbContext>(
-       options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    });   
     builder.Services.AddHealthChecks()
            .AddNpgSql(
        connectionString: builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -41,8 +39,9 @@ var builder = WebApplication.CreateBuilder(args);
     
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
-    builder.Services.AddAutoMapper(typeof(MappingProfile));
-    builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+    builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+    builder.Services.AddSingleton(typeof(AppDbContextFactory));
+    builder.Services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
     builder.Services.AddTransient(typeof(IReportService), typeof(ReportService));
     builder.Services.AddTransient(typeof(IReportDetailService), typeof(ReportDetailService));
     builder.ConfigureRabbitMQ();

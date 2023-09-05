@@ -17,6 +17,7 @@ namespace ContactApi.IntegrationEvents.EventHandlers
             _detailService = detailService;
             _logger = logger;
             _eventBus = eventBus;
+
         }
 
         public async Task Handle(ReportStartedIntegrationEvent @event)
