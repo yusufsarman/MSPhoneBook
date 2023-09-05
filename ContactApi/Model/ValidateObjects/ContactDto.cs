@@ -3,8 +3,7 @@
 namespace ContactApi.Model.ValidateObjects
 {
     public class ContactDto:BaseDto
-    {
-        
+    {       
         [Required(ErrorMessage = "Name is required.")]
         [StringLength(50, ErrorMessage = "Name cannot exceed 50 characters.")]
         public string Name { get; set; }

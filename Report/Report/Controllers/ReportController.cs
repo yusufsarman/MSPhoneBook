@@ -90,7 +90,7 @@ namespace ReportApi.Controllers
                 var report = await _reportService.CreateReportAsync();
                 if (report == null)
                     return NoContent();
-                var reportStartedEventModel = new ReportStartingEvent(report.Id);
+                var reportStartedEventModel = new ReportStartedIntegrationEvent(report.Id);
                 _eventBus.Publish(reportStartedEventModel);
 
                 return CreatedAtAction(nameof(GetByIdAsync), new { id = report.Id }, report); // 201 Created

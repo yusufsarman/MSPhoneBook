@@ -7,6 +7,6 @@ namespace ContactApi.Infrastructure.Interfaces
         Task<ContactDto> CreateContactAsync(ContactCreateDto addContact);
         Task<ContactDto> GetContactByIdAsync(Guid contactId);
         Task DeleteContactByIdAsync(Guid id);
-        Task<List<ContactDto>> GetListAsync();
+        Task<List<ContactDto>> GetListAsync();       
     }
 }

@@ -2,11 +2,11 @@
 
 namespace ReportApi.IntegrationEvents.Events
 {
-    public class ReportStartingEvent : IntegrationEvent
+    public class ReportStartedIntegrationEvent : IntegrationEvent
     {
-        public ReportStartingEvent() { }
+        public ReportStartedIntegrationEvent() { }
 
-        public ReportStartingEvent(Guid reportId)
+        public ReportStartedIntegrationEvent(Guid reportId)
         {
             ReportId = reportId;
         }

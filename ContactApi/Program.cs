@@ -1,6 +1,7 @@
 using ContactApi.Infrastructure;
 using ContactApi.Infrastructure.Concretes;
 using ContactApi.Infrastructure.Interfaces;
+using ContactApi.IoC;
 using ContactApi.Mapping;
 using ContactDetailApi.Infrastructure.Concretes;
 using HealthChecks.UI.Client;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using MSPhoneBook.Shared.Middlewares.Errors;
 
 var builder = WebApplication.CreateBuilder(args);
 {
@@ -37,6 +39,7 @@ var builder = WebApplication.CreateBuilder(args);
     name: "RabbitMQ HealthCheck",
     failureStatus: HealthStatus.Unhealthy | HealthStatus.Healthy,
     tags: new string[] { "rabbitmq" });
+    builder.ConfigureRabbitMQ();
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
@@ -48,6 +51,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 {
+    app.ConfigureEventBusForSubscription();
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
     {
@@ -58,6 +62,7 @@ var app = builder.Build();
     {
         ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
     });
+    app.UseMiddleware<ErrorHandlerMiddleware>();
     app.UseHttpsRedirection();
 
     app.UseAuthorization();

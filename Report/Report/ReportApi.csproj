@@ -32,6 +32,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\BuildingBlock\EventBus\EventBus.Base\EventBus.Base.csproj" />
     <ProjectReference Include="..\..\BuildingBlock\EventBus\EventBus.Factory\EventBus.Factory.csproj" />
+    <ProjectReference Include="..\..\MSPhoneBook.Shared\MSPhoneBook.Shared.csproj" />
   </ItemGroup>
 
 </Project>
