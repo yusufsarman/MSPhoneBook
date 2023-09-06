@@ -9,7 +9,7 @@
           "Port": 5002
         }
       ],
-      "UpstreamPathTemplate": "/contacts/v{version}/CreateContact",
+      "UpstreamPathTemplate": "/v{version}/contact",
       "UpstreamHttpMethod": [ "POST" ],
       "UpstreamScheme": "http"
     },
@@ -22,7 +22,7 @@
           "Port": 5002
         }
       ],
-      "UpstreamPathTemplate": "/contacts/v{version}/DeleteContact/{id}",
+      "UpstreamPathTemplate": "/v{version}/contact/{id}",
       "UpstreamHttpMethod": [ "DELETE" ],
       "UpstreamScheme": "http"
     },
@@ -35,7 +35,7 @@
           "Port": 5002
         }
       ],
-      "UpstreamPathTemplate": "/contacts/v{version}/GetByIdAsync/{id}",
+      "UpstreamPathTemplate": "/v{version}/contact/GetByIdAsync/{id}",
       "UpstreamHttpMethod": [ "GET" ],
       "UpstreamScheme": "http"
     },
@@ -48,7 +48,7 @@
           "Port": 5002
         }
       ],
-      "UpstreamPathTemplate": "/contacts/v{version}/GetListAsync",
+      "UpstreamPathTemplate": "/v{version}/contact/GetListAsync",
       "UpstreamHttpMethod": [ "GET" ],
       "UpstreamScheme": "http"
     },
@@ -61,7 +61,7 @@
           "Port": 5002
         }
       ],
-      "UpstreamPathTemplate": "/contactDetails/v{version}/GetListAsync",
+      "UpstreamPathTemplate": "/v{version}/contactDetail/GetListAsync",
       "UpstreamHttpMethod": [ "GET" ],
       "UpstreamScheme": "http"
     },
@@ -74,7 +74,7 @@
           "Port": 5002
         }
       ],
-      "UpstreamPathTemplate": "/contactDetails/v{version}/CreateContactDetail",
+      "UpstreamPathTemplate": "/v{version}/contactDetail",
       "UpstreamHttpMethod": [ "POST" ],
       "UpstreamScheme": "http"
     },
@@ -87,7 +87,7 @@
           "Port": 5002
         }
       ],
-      "UpstreamPathTemplate": "/contactDetails/v{version}/DeleteContactDetail/{id}",
+      "UpstreamPathTemplate": "/v{version}/contactDetail/{id}",
       "UpstreamHttpMethod": [ "DELETE" ],
       "UpstreamScheme": "http"
     },
@@ -100,7 +100,7 @@
           "Port": 5002
         }
       ],
-      "UpstreamPathTemplate": "/contactDetails/v{version}/GetByIdAsync/{id}",
+      "UpstreamPathTemplate": "/v{version}/contactDetail/GetByIdAsync/{id}",
       "UpstreamHttpMethod": [ "GET" ],
       "UpstreamScheme": "http"
     },
@@ -115,7 +115,7 @@
           "Port": 5003
         }
       ],
-      "UpstreamPathTemplate": "/reports/v{version}/GetListAsync",
+      "UpstreamPathTemplate": "/v{version}/report/GetListAsync",
       "UpstreamHttpMethod": [ "GET" ],
       "UpstreamScheme": "http"
     },
@@ -128,7 +128,7 @@
           "Port": 5003
         }
       ],
-      "UpstreamPathTemplate": "/reports/v{version}/GetByIdAsync/{id}",
+      "UpstreamPathTemplate": "/v{version}/report/GetByIdAsync/{id}",
       "UpstreamHttpMethod": [ "GET" ],
       "UpstreamScheme": "http"
     },
@@ -141,7 +141,7 @@
           "Port": 5003
         }
       ],
-      "UpstreamPathTemplate": "/reports/v{version}/report",
+      "UpstreamPathTemplate": "/v{version}/report",
       "UpstreamHttpMethod": [ "POST" ],
       "UpstreamScheme": "http"
     }
