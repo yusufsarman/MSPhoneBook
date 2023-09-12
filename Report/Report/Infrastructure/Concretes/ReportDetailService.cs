@@ -27,7 +27,7 @@ namespace ReportApi.Infrastructure.Concretes
 
         public async Task<IList<ReportDetailDto>> GetReportDetailsByReportIdAsync(Guid reportId)
         {
-            var data = await _reportDetailRepository.GetAll(x=>x.ReportId == reportId);
+            var data = await _reportDetailRepository.GetAll(includes:x => x.ReportId == reportId);
             return _mapper.Map<List<ReportDetailDto>>(data);
         }
     }

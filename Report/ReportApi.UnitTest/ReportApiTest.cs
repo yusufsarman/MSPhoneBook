@@ -3,9 +3,12 @@ using EventBus.Base.Abstraction;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using ReportApi.Controllers;
 using ReportApi.Infrastructure.Interfaces;
+using ReportApi.IntegrationEvents.Events;
+using ReportApi.IntegrationEvents.Handlers;
 using ReportApi.Mapping;
 using ReportApi.Model.ValidateObjects;
 using System;
@@ -219,7 +222,7 @@ namespace ReportApi.UnitTest
             var objectResult = (ObjectResult)actionResult;
             var response = (ReportDto)objectResult.Value;
             Assert.AreEqual(expectedData, response);
-        }
+        }        
         private List<ReportDto> GetReportsFoo(Guid id)
         {
             return new List<ReportDto>

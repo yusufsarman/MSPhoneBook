@@ -4,13 +4,13 @@ namespace ContactApi.Infrastructure
 {
     public interface IRepository<T> where T : class
     {
-        Task<IEnumerable<T>> GetAll(params Expression<Func<T, object>>[] includes);
-        Task<IEnumerable<T>> Find(Expression<Func<T, bool>> predicate);
-        Task<T> GetById(Guid id, params Expression<Func<T, object>>[] includes);
-        Task<T> Add(T entity);
-        Task AddRange(IEnumerable<T> entity);
-        Task Update(T entity);
-        Task Delete(Guid id);
+        Task<IEnumerable<T>> GetAll(CancellationToken cancellationToken = default, params Expression<Func<T, object>>[] includes);
+        Task<IEnumerable<T>> Find(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
+        Task<T> GetById(Guid id,  CancellationToken cancellationToken = default, params Expression<Func<T, object>>[] includes);
+        Task<T> Add(T entity, CancellationToken cancellationToken = default);
+        Task AddRange(IEnumerable<T> entity, CancellationToken cancellationToken = default);
+        Task Update(T entity, CancellationToken cancellationToken = default);
+        Task Delete(Guid id, CancellationToken cancellationToken = default);
         IQueryable<T> Include(params Expression<Func<T, object>>[] includes);
     }
 }

@@ -103,9 +103,8 @@
       "UpstreamPathTemplate": "/v{version}/contactDetail/GetByIdAsync/{id}",
       "UpstreamHttpMethod": [ "GET" ],
       "UpstreamScheme": "http"
-    },
+    },    
     
-    //ReportApi
     {
       "DownstreamPathTemplate": "/api/v{version}/report/GetListAsync",
       "DownstreamScheme": "http",

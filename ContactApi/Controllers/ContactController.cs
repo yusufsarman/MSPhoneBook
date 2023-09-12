@@ -1,6 +1,7 @@
 ﻿using ContactApi.Infrastructure.Interfaces;
 using ContactApi.Model.ValidateObjects;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace ContactApi.Controllers
 {
@@ -10,61 +11,48 @@ namespace ContactApi.Controllers
     public class ContactController : ControllerBase
     {
         private readonly IContactService _contactService;
+
         public ContactController(IContactService contactService)
         {
             _contactService = contactService;
         }
+
         [HttpGet("GetByIdAsync/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetByIdAsync(Guid id)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetByIdAsync([Required] Guid id)
         {
-            if (id != Guid.Empty)
+            try
             {
-                try
+                if (id == Guid.Empty)
+                    return BadRequest();
+                ContactDto contact = await _contactService.GetContactByIdAsync(id);
+                if (contact == null)
                 {
-                    ContactDto contact = await _contactService.GetContactByIdAsync(id);
-                    if (contact == null)
-                    {
-                        return UnprocessableEntity(); // 204 Not Found
-                    }
-
-                    return Ok(contact); // 200 OK
-
-                }
-                catch (Exception ex)
-                {
-
-                    return BadRequest(ex);
+                    return NotFound(); // 404 Not Found
                 }
 
+                return Ok(contact); // 200 OK
             }
-            else
+            catch (Exception ex)
             {
-                return BadRequest("Id must be a valid Guid");
+                return BadRequest(ex);
             }
-
-
         }
 
         [HttpGet("GetListAsync")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetListAsync()
         {
             try
             {
                 List<ContactDto> data = await _contactService.GetListAsync();
                 return Ok(data); // 200 OK
-
             }
             catch (Exception ex)
             {
-
                 return BadRequest(ex);
             }
-
         }
 
         [HttpPost]
@@ -77,46 +65,37 @@ namespace ContactApi.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest(ModelState); // Return validation errors
+                    return UnprocessableEntity(ModelState); // Return validation errors
                 }
                 ContactDto data = await _contactService.CreateContactAsync(contact);
                 if (data == null)
                 {
                     return UnprocessableEntity();
                 }
-                return CreatedAtAction(nameof(GetByIdAsync), new { id = data.Id }, data); // 201 Created
+                return CreatedAtRoute(nameof(GetByIdAsync), new { id = data.Id }, data); // 201 Created
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
-
         }
+
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> DeleteAsync(Guid id)
+        public async Task<IActionResult> DeleteAsync([Required] Guid id)
         {
-            if (id != Guid.Empty)
+            try
             {
-                try
-                {
-                    await _contactService.DeleteContactByIdAsync(id);
-                    return NoContent(); // 204 No Content
-                }
-                catch (Exception ex)
-                {
-
-                    return BadRequest(ex);
-                }
-
+                if (id == Guid.Empty)
+                    return BadRequest("Id must be a valid Guid");
+                await _contactService.DeleteContactByIdAsync(id);
+                return NoContent(); // 204 No Content
             }
-            else
+            catch (Exception ex)
             {
-                return BadRequest("Id must be a valid Guid");
+                return BadRequest(ex);
             }
-
-
         }
     }
 }

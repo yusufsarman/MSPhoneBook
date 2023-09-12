@@ -5,7 +5,7 @@ using ContactApi.Model.ValidateObjects;
 
 namespace ContactApi.Infrastructure.Concretes
 {
-    public class ContactService:IContactService
+    public class ContactService : IContactService
     {
         private readonly IRepository<Contact> _contactRepository;
         private readonly IMapper _mapper;
@@ -16,29 +16,33 @@ namespace ContactApi.Infrastructure.Concretes
             _mapper = mapper;
         }
 
-        public async Task<ContactDto> CreateContactAsync(ContactCreateDto addContact)
+        public async Task<ContactDto> CreateContactAsync(ContactCreateDto addContact, CancellationToken cancellationToken = default)
         {
             var _input = _mapper.Map<Contact>(addContact);
-            var data =await _contactRepository.Add(_input);
+            var data = await _contactRepository.Add(_input);
 
             return _mapper.Map<ContactDto>(data);
 
         }
 
-        public async Task DeleteContactByIdAsync(Guid id)
+        public async Task DeleteContactByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
+            if (id == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
             await _contactRepository.Delete(id);
         }
 
-        public async Task<ContactDto> GetContactByIdAsync(Guid contactId)
+        public async Task<ContactDto> GetContactByIdAsync(Guid contactId, CancellationToken cancellationToken = default)
         {
-            var data = await _contactRepository.GetById(contactId,c=>c.ContactDetails);
+            var data = await _contactRepository.GetById(contactId, cancellationToken, c => c.ContactDetails);
             return _mapper.Map<ContactDto>(data);
         }
 
-        public async Task<List<ContactDto>> GetListAsync()
+        public async Task<List<ContactDto>> GetListAsync(CancellationToken cancellationToken = default)
         {
-            var data = await _contactRepository.GetAll(c=>c.ContactDetails);
+            var data = await _contactRepository.GetAll(cancellationToken, c => c.ContactDetails);
             return _mapper.Map<List<ContactDto>>(data);
         }
     }
