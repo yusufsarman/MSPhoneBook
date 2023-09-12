@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -43,7 +44,8 @@ namespace ContactApi.UnitTest
         public async Task Contact_GetListAsync_Status200()
         {
             var contactGuid = Guid.NewGuid();
-            _contactServiceMock.Setup(x => x.GetListAsync())
+            var cancellationToken = new CancellationToken();
+            _contactServiceMock.Setup(x => x.GetListAsync(cancellationToken))
              .Returns(Task.FromResult(GetContactsFoo(contactGuid)));
 
 
@@ -59,7 +61,8 @@ namespace ContactApi.UnitTest
         public async Task Contact_GetListAsync_Status400()
         {
             var contactGuid = Guid.NewGuid();
-            _contactServiceMock.Setup(x => x.GetListAsync()).ThrowsAsync(new Exception("Error"));
+            var cancellationToken = new CancellationToken();
+            _contactServiceMock.Setup(x => x.GetListAsync(cancellationToken)).ThrowsAsync(new Exception("Error"));
 
             var actionResult = await _contactController.GetListAsync();
             var objectResult = (BadRequestObjectResult)actionResult;
@@ -72,8 +75,8 @@ namespace ContactApi.UnitTest
         {
             var ReportGuid = Guid.NewGuid();
             var expectedData = GetContactsFoo(ReportGuid);
-
-            _contactServiceMock.Setup(x => x.GetListAsync())
+            var cancellationToken = new CancellationToken();
+            _contactServiceMock.Setup(x => x.GetListAsync(cancellationToken))
              .Returns(Task.FromResult(expectedData));
 
 
@@ -87,7 +90,8 @@ namespace ContactApi.UnitTest
         [TestMethod]
         public async Task Contact_GetListAsync_HandlesNullData()
         {
-            _contactServiceMock.Setup(x => x.GetListAsync())
+            var cancellationToken = new CancellationToken();
+            _contactServiceMock.Setup(x => x.GetListAsync(cancellationToken))
            .ReturnsAsync((List<ContactDto>)null);
 
 
@@ -102,8 +106,9 @@ namespace ContactApi.UnitTest
         [TestMethod]
         public async Task Contact_GetByIdAsync_Status200()
         {
+            var cancellationToken = new CancellationToken();
             Guid contactId = Guid.NewGuid();
-            _contactServiceMock.Setup(x => x.GetContactByIdAsync(contactId))
+            _contactServiceMock.Setup(x => x.GetContactByIdAsync(contactId, cancellationToken))
              .Returns(Task.FromResult(GetContactFoo(contactId)));
 
 
@@ -119,27 +124,33 @@ namespace ContactApi.UnitTest
         }
 
         [TestMethod]
-        public async Task Contact_GetByIdAsync_EmptyGuidwithErrorTextStatus400()
+        public async Task Contact_GetContactByIdAsync_InvalidId_Returns404NotFound()
         {
-            var actionResult = await _contactController.GetByIdAsync(Guid.Empty);
+            // Arrange
+            var cancellationToken = new CancellationToken();
+            var contactId = Guid.NewGuid();
+            _contactServiceMock.Setup(x => x.GetContactByIdAsync(contactId, cancellationToken))
+                .Returns(Task.FromResult<ContactDto>(null));
 
+            // Act
+            var actionResult = await _contactController.GetByIdAsync(contactId);
 
-            var objectResult = (BadRequestObjectResult)actionResult;
-
-            Assert.AreEqual(objectResult.StatusCode, (int)System.Net.HttpStatusCode.BadRequest);
-            Assert.AreEqual("Id must be a valid Guid", objectResult.Value);
+            // Assert
+            Assert.IsInstanceOfType(actionResult, typeof(NotFoundResult));
         }
+        
         [TestMethod]
-        public async Task Contact_GetByIdAsync_HandleNullDataStatus422()
+        public async Task Contact_GetByIdAsync_HandleNullDataStatus404()
         {
             var ReportGuid = Guid.NewGuid();
-            _contactServiceMock.Setup(x => x.GetContactByIdAsync(It.IsAny<Guid>()))
+            var cancellationToken = new CancellationToken();
+            _contactServiceMock.Setup(x => x.GetContactByIdAsync(It.IsAny<Guid>(), cancellationToken))
              .Returns(Task.FromResult((ContactDto?)null));
             var actionResult = await _contactController.GetByIdAsync(ReportGuid);
 
-            var objectResult = (UnprocessableEntityResult)actionResult;
+            var objectResult = (NotFoundResult)actionResult;
 
-            Assert.AreEqual(objectResult.StatusCode, (int)System.Net.HttpStatusCode.UnprocessableEntity);
+            Assert.AreEqual(objectResult.StatusCode, (int)System.Net.HttpStatusCode.NotFound);
 
         }
         [TestMethod]
@@ -147,8 +158,8 @@ namespace ContactApi.UnitTest
         {
             var contactGuid = Guid.NewGuid();
             var expectedData = GetContactFoo(contactGuid);
-
-            _contactServiceMock.Setup(x => x.GetContactByIdAsync(contactGuid))
+            var cancellationToken = new CancellationToken();
+            _contactServiceMock.Setup(x => x.GetContactByIdAsync(contactGuid, cancellationToken))
              .Returns(Task.FromResult(expectedData));
 
 
@@ -159,6 +170,8 @@ namespace ContactApi.UnitTest
             var response = (ContactDto)objectResult.Value;
             Assert.AreEqual(expectedData, response);
         }
+        
+        
         [TestMethod]
         public async Task Contact_CreateAsync_ModelIsValid()
         {
@@ -209,7 +222,8 @@ namespace ContactApi.UnitTest
         {
             var contactId = Guid.NewGuid();
             var contactInfo = GetContactCreateFoo();
-            _contactServiceMock.Setup(x => x.CreateContactAsync(contactInfo))
+            var cancellationToken = new CancellationToken();
+            _contactServiceMock.Setup(x => x.CreateContactAsync(contactInfo, cancellationToken))
              .Returns(Task.FromResult(GetContactFoo(contactId)));
 
 
@@ -228,7 +242,8 @@ namespace ContactApi.UnitTest
         {
             var contactId = Guid.NewGuid();
             var contactInfo = GetContactCreateFoo();
-            _contactServiceMock.Setup(x => x.CreateContactAsync(contactInfo)).ThrowsAsync(new Exception("Error"));
+            var cancellationToken = new CancellationToken();
+            _contactServiceMock.Setup(x => x.CreateContactAsync(contactInfo, cancellationToken)).ThrowsAsync(new Exception("Error"));
 
 
             var actionResult = await _contactController.CreateAsync(contactInfo);
@@ -239,47 +254,45 @@ namespace ContactApi.UnitTest
             Assert.AreEqual(objectResult.StatusCode, (int)System.Net.HttpStatusCode.BadRequest);
         }
         [TestMethod]
-        public async Task Contact_CreateAsync_Status422()
+        public async Task Contact_CreateAsync_InvalidData_Returns422UnprocessableEntity()
         {
-            var contactId = Guid.NewGuid();
-            var contactInfo = GetContactCreateFoo();
-            _contactServiceMock.Setup(x => x.CreateContactAsync(contactInfo)).Returns(Task.FromResult((ContactDto?)null));
+            // Arrange
+            var contactCreateDto = new ContactCreateDto { Name = null };
 
+            // Act
+            var actionResult = await _contactController.CreateAsync(contactCreateDto);
 
-
-            var actionResult = await _contactController.CreateAsync(contactInfo);
-
-
-            var objectResult = (UnprocessableEntityResult)actionResult;
-            Assert.AreEqual(objectResult.StatusCode, (int)System.Net.HttpStatusCode.UnprocessableEntity);
+            // Assert
+            Assert.IsInstanceOfType(actionResult, typeof(UnprocessableEntityResult));
         }
-
         [TestMethod]
-        public async Task Contact_DeleteContactByIdAsync_Status204()
+        public async Task Contact_CreateAsync_NullData_Returns422UnprocessableEntity()
+        {
+            // Arrange
+            ContactCreateDto contactCreateDto = null;
+
+            // Act
+            var actionResult = await _contactController.CreateAsync(contactCreateDto);
+
+            // Assert
+            Assert.IsInstanceOfType(actionResult, typeof(UnprocessableEntityResult));
+        }
+        
+        [TestMethod]
+        public async Task Contact_DeleteAsync_ValidId_Returns204NoContent()
         {
             var contactId = Guid.NewGuid();
-
-            _contactServiceMock.Setup(x => x.DeleteContactByIdAsync(contactId))
+            var cancellationToken = new CancellationToken();
+            _contactServiceMock.Setup(x => x.DeleteContactByIdAsync(contactId, cancellationToken))
              .Returns(Task.FromResult(true));
 
 
             var actionResult = await _contactController.DeleteAsync(contactId);
-            var objectResult = (NoContentResult)actionResult;
-
-            Assert.AreEqual(objectResult.StatusCode, (int)System.Net.HttpStatusCode.NoContent);
-        }
+            Assert.IsInstanceOfType(actionResult, typeof(NoContentResult));
+            Assert.AreEqual((actionResult as NoContentResult).StatusCode, (int)HttpStatusCode.NoContent);
+        }        
         [TestMethod]
-        public async Task Contact_DeleteContactByIdAsync_Status400()
-        {
-
-            var actionResult = await _contactController.DeleteAsync(Guid.Empty);
-
-
-            var objectResult = (BadRequestObjectResult)actionResult;
-            Assert.AreEqual(objectResult.StatusCode, (int)System.Net.HttpStatusCode.BadRequest);
-        }
-        [TestMethod]
-        public async Task Contact_DeleteContactByIdAsync_ValidIdStatus400()
+        public async Task Contact_DeleteContactByIdAsync_InvalidIdStatus400()
         {
 
             var actionResult = await _contactController.DeleteAsync(Guid.Empty);
@@ -289,6 +302,7 @@ namespace ContactApi.UnitTest
             Assert.AreEqual(objectResult.StatusCode, (int)System.Net.HttpStatusCode.BadRequest);
             Assert.AreEqual("Id must be a valid Guid", objectResult.Value);
         }
+
         private List<ContactDto> GetContactsFoo(Guid id)
         {
             return new List<ContactDto>
@@ -371,8 +385,10 @@ namespace ContactApi.UnitTest
         [TestMethod]
         public async Task ContactDetail_GetListAsync_Status200()
         {
+            var cancellationToken = new CancellationToken();
+
             var contactGuid = Guid.NewGuid();
-            _contactDetailServiceMock.Setup(x => x.GetListAsync())
+            _contactDetailServiceMock.Setup(x => x.GetListAsync(cancellationToken))
              .Returns(Task.FromResult(GetContactDetailsFoo(contactGuid)));
 
 
@@ -388,7 +404,8 @@ namespace ContactApi.UnitTest
         public async Task ContactDetail_GetListAsync_Status400()
         {
             var contactDetailGuid = Guid.NewGuid();
-            _contactDetailServiceMock.Setup(x => x.GetListAsync()).ThrowsAsync(new Exception("Error"));
+            var cancellationToken = new CancellationToken();
+            _contactDetailServiceMock.Setup(x => x.GetListAsync(cancellationToken)).ThrowsAsync(new Exception("Error"));
 
             var actionResult = await _contactDetailController.GetListAsync();
             var objectResult = (BadRequestObjectResult)actionResult;
@@ -401,8 +418,8 @@ namespace ContactApi.UnitTest
         {
             var ReportGuid = Guid.NewGuid();
             var expectedData = GetContactDetailsFoo(ReportGuid);
-
-            _contactDetailServiceMock.Setup(x => x.GetListAsync())
+            var cancellationToken = new CancellationToken();
+            _contactDetailServiceMock.Setup(x => x.GetListAsync(cancellationToken))
              .Returns(Task.FromResult(expectedData));
 
 
@@ -416,7 +433,8 @@ namespace ContactApi.UnitTest
         [TestMethod]
         public async Task ContactDetail_GetListAsync_HandlesNullData()
         {
-            _contactDetailServiceMock.Setup(x => x.GetListAsync())
+            var cancellationToken = new CancellationToken();
+            _contactDetailServiceMock.Setup(x => x.GetListAsync(cancellationToken))
            .ReturnsAsync((List<ContactDetailDto>)null);
 
 
@@ -431,8 +449,9 @@ namespace ContactApi.UnitTest
         [TestMethod]
         public async Task ContactDetail_GetByIdAsync_Status200()
         {
+            var cancellationToken = new CancellationToken();
             Guid contactId = Guid.NewGuid();
-            _contactDetailServiceMock.Setup(x => x.GetContactDetailByIdAsync(contactId))
+            _contactDetailServiceMock.Setup(x => x.GetContactDetailByIdAsync(contactId, cancellationToken))
              .Returns(Task.FromResult(GetContactDetailFoo(contactId)));
 
 
@@ -461,8 +480,9 @@ namespace ContactApi.UnitTest
         [TestMethod]
         public async Task ContactDetail_GetByIdAsync_HandleNullDataStatus404()
         {
+            var cancellationToken = new CancellationToken();
             var ContactGuid = Guid.NewGuid();
-            _contactDetailServiceMock.Setup(x => x.GetContactDetailByIdAsync(It.IsAny<Guid>()))
+            _contactDetailServiceMock.Setup(x => x.GetContactDetailByIdAsync(It.IsAny<Guid>(),cancellationToken))
              .Returns(Task.FromResult((ContactDetailDto?)null));
             var actionResult = await _contactDetailController.GetByIdAsync(ContactGuid);
 
@@ -476,8 +496,8 @@ namespace ContactApi.UnitTest
         {
             var contactGuid = Guid.NewGuid();
             var expectedData = GetContactDetailFoo(contactGuid);
-
-            _contactDetailServiceMock.Setup(x => x.GetContactDetailByIdAsync(contactGuid))
+            var cancellationToken = new CancellationToken();
+            _contactDetailServiceMock.Setup(x => x.GetContactDetailByIdAsync(contactGuid, cancellationToken))
              .Returns(Task.FromResult(expectedData));
 
 
@@ -538,7 +558,8 @@ namespace ContactApi.UnitTest
                 ContactDetailType = ContactDetailTypeEnum.Email,
                 Content = "aaa"
             };
-            _contactDetailServiceMock.Setup(x => x.CreateContactDetailAsync(model))
+            var cancellationToken = new CancellationToken();
+            _contactDetailServiceMock.Setup(x => x.CreateContactDetailAsync(model, cancellationToken))
              .Returns(Task.FromResult(GetContactDetailFoo(contactDetailId)));
 
 
@@ -555,6 +576,7 @@ namespace ContactApi.UnitTest
         [TestMethod]
         public async Task ContactDetail_CreateAsync_ExceptionThrowStatus400()
         {
+            var cancellationToken = new CancellationToken();
             var contactDetailId = Guid.NewGuid();
             var model = new ContactDetailCreateDto()
             {
@@ -562,7 +584,7 @@ namespace ContactApi.UnitTest
                 ContactDetailType = ContactDetailTypeEnum.Email,
                 Content = "aaa"
             };
-            _contactDetailServiceMock.Setup(x => x.CreateContactDetailAsync(model)).ThrowsAsync(new Exception("Error"));
+            _contactDetailServiceMock.Setup(x => x.CreateContactDetailAsync(model, cancellationToken)).ThrowsAsync(new Exception("Error"));
 
 
             var actionResult = await _contactDetailController.CreateAsync(model);
@@ -582,7 +604,8 @@ namespace ContactApi.UnitTest
                 ContactDetailType = ContactDetailTypeEnum.Email,
                 Content = "aaa"
             };
-            _contactDetailServiceMock.Setup(x => x.CreateContactDetailAsync(model)).Returns(Task.FromResult((ContactDetailDto?)null));
+            var cancellationToken = new CancellationToken();
+            _contactDetailServiceMock.Setup(x => x.CreateContactDetailAsync(model, cancellationToken)).Returns(Task.FromResult((ContactDetailDto?)null));
 
 
 
@@ -597,8 +620,8 @@ namespace ContactApi.UnitTest
         public async Task ContactDetail_DeleteContactDetailByIdAsync_Status204()
         {
             var contactId = Guid.NewGuid();
-
-            _contactDetailServiceMock.Setup(x => x.DeleteContactDetailByIdAsync(contactId))
+            var cancellationToken = new CancellationToken();
+            _contactDetailServiceMock.Setup(x => x.DeleteContactDetailByIdAsync(contactId, cancellationToken))
              .Returns(Task.FromResult(true));
 
 

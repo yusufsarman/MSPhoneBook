@@ -31,13 +31,13 @@ namespace ReportApi.Infrastructure.Concretes
 
         public async Task<List<ReportDto>> GetListAsync()
         {
-            var data = await _reportRepository.GetAll(c => c.ReportDetail);
+            var data = await _reportRepository.GetAll(includes:c => c.ReportDetail);
             return _mapper.Map<List<ReportDto>>(data);
         }
 
         public async Task<ReportDto> GetReportByIdAsync(Guid reportId)
         {
-            var data = await _reportRepository.GetById(reportId, c => c.ReportDetail);
+            var data = await _reportRepository.GetById(reportId, includes:c => c.ReportDetail);
             return _mapper.Map<ReportDto>(data);
         }
 

@@ -4,7 +4,7 @@ namespace ContactApi.Infrastructure
 {    
     public class AppDbContextFactory : IDbContextFactory<AppDbContext>
     {        
-        public AppDbContext CreateDbContext()
+        public virtual AppDbContext CreateDbContext()
         {
             // You can use this method to configure and create your DbContext.
             var configuration = new ConfigurationBuilder()
